@@ -778,11 +778,12 @@ async function activarPiper(){
       }
       paso = "preparar la voz";
       $("#progText").textContent = "Preparando la voz…";
-      await sintetizarTexto("Listo.");             /* prueba real, con respaldo incluido */
+      await tts.predict({ text: "Listo.", voiceId: PIPER_ID });   /* prueba con el motor probado */
       store.set("piperOk", PIPER_ID);
     }
     motor = "piper"; piperListo = true; store.set("motor", "piper");
     voiceSel.value = "piper";
+    setTimeout(() => { prepararMotor().catch(() => {}); }, 4000);   /* el motor rápido, sin prisa */
     note("Voz <b>" + PIPER_ID + "</b> lista. Suena igual en cualquier equipo y ya no necesita conexión." +
          (razonRespaldo ? " Va en modo compatible, un poco más lento al empezar cada frase (" + esc(razonRespaldo) + ")." : ""), true);
     progress();
@@ -808,7 +809,7 @@ const ORT_ESM   = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.18.0/+esm";
 const ORT_WASM  = "https://cdnjs.cloudflare.com/ajax/libs/onnxruntime-web/1.18.0/";
 const FONEMAS   = "https://cdn.jsdelivr.net/npm/@diffusionstudio/piper-wasm@1.0.0/build/piper_phonemize";
 let ortMod = null, sesion = null, cfgVoz = null, fonemizador = null;
-let resolverFonemas = null, rechazarFonemas = null, preparando = null;
+let resolverFonemas = null, rechazarFonemas = null, preparando = null, pasoMotor = "";
 
 function cargarScript(url){
   return new Promise((ok, mal) => {
@@ -828,19 +829,33 @@ function prepararMotor(){
   if(sesion) return Promise.resolve();
   if(preparando) return preparando;
   preparando = (async () => {
+    pasoMotor = "cargar onnxruntime";
     const ort = ortMod || (ortMod = await import(ORT_ESM));
     ort.env.allowLocalModels = false;
     ort.env.wasm.wasmPaths = ORT_WASM;
     ort.env.wasm.numThreads = 1;              /* sin aislamiento no hay hilos disponibles */
+    pasoMotor = "leer la configuración";
     cfgVoz = JSON.parse(await (await archivoOPFS(PIPER_ID + ".onnx.json")).text());
+    pasoMotor = "leer el modelo";
     const modelo = await archivoOPFS(PIPER_ID + ".onnx");
-    sesion = await ort.InferenceSession.create(await modelo.arrayBuffer());
+    pasoMotor = "crear la sesión";
+    const enlace = URL.createObjectURL(modelo);
+    try{
+      sesion = await ort.InferenceSession.create(enlace);      /* sin copia intermedia */
+    }catch(e){
+      pasoMotor = "crear la sesión (copia en memoria)";
+      sesion = await ort.InferenceSession.create(await modelo.arrayBuffer());
+    }finally{
+      URL.revokeObjectURL(enlace);
+    }
+    pasoMotor = "cargar el fonemizador";
     if(!window.createPiperPhonemize) await cargarScript(FONEMAS + ".js");
     fonemizador = await window.createPiperPhonemize({
       print: d => { const ok = resolverFonemas; resolverFonemas = rechazarFonemas = null; if(ok) ok(JSON.parse(d).phoneme_ids); },
       printErr: m => { const mal = rechazarFonemas; resolverFonemas = rechazarFonemas = null; if(mal) mal(new Error(m)); },
       locateFile: u => u.endsWith(".wasm") ? FONEMAS + ".wasm" : (u.endsWith(".data") ? FONEMAS + ".data" : u)
     });
+    pasoMotor = "";
   })();
   preparando.catch(() => { preparando = null; sesion = null; });
   return preparando;
@@ -881,7 +896,9 @@ function pcmAWav(pcm, sampleRate){
 }
 async function sintetizar(texto){
   await prepararMotor();
+  pasoMotor = "convertir el texto en fonemas";
   const ids = await fonemas(texto);
+  pasoMotor = "generar el audio";
   const ort = ortMod;
   const feeds = {
     input: new ort.Tensor("int64", BigInt64Array.from(ids.map(n => BigInt(n))), [1, ids.length]),
@@ -893,6 +910,7 @@ async function sintetizar(texto){
     feeds.sid = new ort.Tensor("int64", BigInt64Array.from([BigInt(0)]));
   }
   const salida = await sesion.run(feeds);
+  pasoMotor = "";
   return new Blob([pcmAWav(salida.output.data, cfgVoz.audio.sample_rate)], { type: "audio/wav" });
 }
 
@@ -905,7 +923,8 @@ async function sintetizarTexto(texto){
       return await sintetizar(texto);
     }catch(e){
       motorPropioSirve = false;
-      razonRespaldo = String(e && e.message ? e.message : e).slice(0, 140);
+      razonRespaldo = (pasoMotor ? "al " + pasoMotor + " · " : "") +
+                      String(e && e.message ? e.message : e).slice(0, 140);
       try{ if(sesion && sesion.release) await sesion.release(); }catch(x){}
       sesion = null; preparando = null; fonemizador = null;
     }
