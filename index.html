@@ -54,6 +54,7 @@
 }
 
 *{box-sizing:border-box}
+[hidden]{display:none !important}   /* las clases con display propio no deben pisar el atributo */
 body{
   margin:0; background:var(--bg); color:var(--text);
   font-family:"Archivo","Helvetica Neue",Arial,sans-serif;
@@ -223,9 +224,11 @@ main{padding:30px 18px 96px}
 <div class="panel" id="panel" hidden>
   <section>
     <span class="lbl">Texto</span>
+    <select class="sel" id="lista" aria-label="Texto a leer"></select>
     <div class="fila">
       <button class="btn primary" id="openBtn2">Abrir archivo .txt</button>
       <button class="btn" id="pegarBtn">Pegar texto</button>
+      <button class="btn" id="quitarBtn" hidden>Quitar</button>
     </div>
     <p class="stats" id="stats"></p>
     <div id="pegar" hidden>
@@ -313,6 +316,115 @@ Para escuchar el texto, presiona el botón de reproducción. La frase que se est
 Los temas Claro y Papel descansan la vista de día; Penumbra y Nocturno sirven de noche; Contraste está pensado para quien necesita el máximo de legibilidad.
 
 Todo ocurre dentro de tu navegador. El archivo que abres no se envía a ningún servidor.`;
+
+const SERMON = `Lo mejor en el mejor lugar
+(Nº 3002)
+
+SERMÓN PUBLICADO EL JUEVES 23 DE AGOSTO DE 1906.
+
+ENTREGADO POR CH SPURGEON,
+
+EN EL TABERNÁCULO METROPOLITANO DE NEWINGTON, LA NOCHE DEL DOMINGO 31 DE OCTUBRE DE 1875.
+
+"La ley de su Dios está en su corazón; ninguno de sus pasos resbalará." Salmo 37:31 .
+
+Este versículo aparece en un salmo donde se traza un contraste muy vívido entre justos e impíos. Los impíos son descritos con frecuencia como ricos y prósperos, pero nadie verdaderamente sabio desearía estar en su lugar. El salmista señala con tanta claridad la brevedad de su prosperidad, la certeza de su destino final si no se regeneran y el terror de su caída, que ni por un instante sentimos envidia de ellos. En cuanto a los justos, David nos da abundantes indicios de que serán probados, perseguidos, odiados, etc., pero nos colma de dulces promesas de boca del Padre mismo, que nos sentimos plenamente satisfechos de compartir la suerte de sus hijos, por difícil que a veces sea. Si deseamos compartir la suerte de los justos, debemos ser como ellos y, entre otras cosas, este texto debe hacerse realidad en nuestra experiencia como en la de ellos. La Ley de nuestro Dios debe estar en nuestro corazón para que nuestros pasos no resbalen.
+
+Recuerdo, cuando era niño, haber escuchado un sermón basado en un texto casi idéntico al que tenemos ante nosotros: «En mi corazón he guardado tu Palabra, para no pecar contra ti». La estructura de aquel sermón era tan excelente y se grabó tan firmemente en mi memoria que la usaré en esta ocasión, pues no puedo formular una mejor. El predicador dijo: «Aquí tenemos lo mejor: “Tu Palabra”. En el mejor lugar: “la he guardado en mi corazón”. Con el mejor propósito: “para no pecar contra ti”». Esa será la estructura de mi texto, con la siguiente modificación: lo mejor: «la Ley de su Dios». En el mejor lugar: «está en su corazón». Con el mejor resultado: «Ninguno de sus pasos resbalará».
+
+I. Así que seré el primero en hablar, durante unos minutos, sobre LO MEJOR: "La Ley de su Dios".
+
+En estos tiempos del Evangelio, debemos usar esta expresión en un sentido más amplio del que David pudo haber pretendido originalmente, y entenderla como algo mucho más que la Ley moral. Si somos cristianos, nos deleitamos en esa Ley, pero no estamos bajo ella como una norma de condenación y juicio, sino que nos regocijamos al obedecerla. No podríamos sugerir ninguna modificación que la mejorara. Los Diez Mandamientos son muy sencillos, pero absolutamente perfectos para el propósito para el que fueron concebidos. Añadirles uno o quitarles alguno sería desvirtuar el conjunto. Nos deleitamos en la Ley de Dios según el hombre interior. Quienes sean antinomianos, es decir, quienes están "en contra de la Ley", no debemos contarnos entre ellos, pues podemos decir con Pablo: "La Ley es santa, y los Mandamientos santos, justos y buenos". Y aunque somos carnales y a menudo nos sentimos "vendidos al pecado", no podemos encontrar ninguna falta en la Ley de Dios. Si la vida eterna pudiera haberse obtenido mediante alguna ley, habría sido mediante esa Ley; y aunque esa Ley ahora no puede hacer nada por nosotros más que condenarnos, al oír su terrible sentencia, sentimos que la Ley «es santa, justa y buena». Deseamos, pues, tener incluso la Ley moral en nuestros corazones, y que esté escrita allí, para que ninguno de nuestros pasos resbale.
+
+Pero no podemos usar la expresión de David solo en ese sentido limitado. Ahora debe incluir todo el Libro de Dios y todas sus enseñanzas, pues a menudo se usa en ese sentido. "La Ley de su Dios está en su corazón". Tomen esta expresión como referida a toda la Escritura, y verdaderamente puedo decir que es lo mejor. Oh, hermanos y hermanas, ¿qué puede ser mejor para informar el entendimiento que la Palabra de Dios? ¿Quieren conocer a Dios? ¿Quieren conocerse a sí mismos? ¡Entonces escudriñen este Libro! ¿Quieren conocer el tiempo y cómo emplearlo? ¿Quieren conocer la eternidad y cómo prepararse para ella? ¡Entonces, escudriñen este Libro! ¿Quieren conocer el mal del pecado y cómo ser liberados de él? ¿Quieren conocer el plan de salvación y Cómo puedes participar de esto? ¡Este es el Libro que te instruirá en todos estos asuntos! No hay nada que un hombre necesite saber para los asuntos de su alma, entre este mundo y el Cielo, que este Libro no le revele. Bienaventurados los que lo leen día y noche, y especialmente bienaventurados los que lo leen con los ojos abiertos e iluminados por el Espíritu Divino. Si deseas alcanzar la salvación, elige la Palabra de Dios, y especialmente el Espíritu de Dios, como tu Maestro. No hay nada comparable a la Biblia para encender, santificar y encauzar todas las pasiones del alma.
+
+Quizás no te basta con saber. Quieres algo o a alguien a quien amar. Hombres y mujeres de gran corazón, cuyo único deseo es tener un objeto digno en el que fijar vuestro afecto, acudid a esta Palabra de Dios, a esta Ley de Dios, a su Evangelio, y veréis allí cómo Dios mismo se convierte en el objeto del amor de sus criaturas, y cómo, en la Persona de su Hijo, tenéis el objeto más hermoso que jamás hayan contemplado ojos humanos. En Él tenéis a Alguien tan hermoso que una sola mirada suya basta para encender vuestra alma y enamoraros de Él para siempre. Vosotros, que tenéis poderosas fuentes de amor brotando en vuestra alma, venid aquí y dejad que fluyan libremente, porque aquí está Alguien digno de todas ellas. Y cuando hayáis amado a Cristo tanto como podáis, no le habréis amado ni la mitad de lo que merece ser amado. Aquí vuestras pasiones pueden arder, resplandecer y brillar con sagrado fervor, sin temor a ser idólatras, ¡y sin riesgo alguno de ser engañados!
+
+Y si buscas algo más que la iluminación para comprender y experimentar la plenitud del amor que satisfaga tu corazón, si necesitas orientación práctica para tu vida diaria, este Libro te la brindará. En cualquier circunstancia de la vida en la que te encuentres, si este es tu mapa, no te extraviarás ni naufragarás espiritualmente. Si fueras rey, aquí podrías aprender tu deber; y si fueras mendigo o el más pobre de los pobres, aquí podrías encontrar consuelo e instrucción. Padres, aquí podrían aprender a administrar sus hogares. Hijos, aquí podrían aprender los deberes propios de su posición en sus diversas relaciones. Sirvientes, amos, esposos, esposas, enfermos, personas con buena salud, pobres y ricos: este Libro es para todos ustedes, y cuando lo consulten con la actitud correcta, ¡les hablará a todos! Cualquiera que sea su situación, este Libro los acompañará. ¡Es un Libro tan maravilloso que se adapta a todo tipo de hombres y mujeres! Susurra suavemente junto al lecho del enfermo y a menudo ha clamado con voz atronadora, como una trompeta, en medio de la furia de la tormenta. Tiene un mensaje para ti mientras aún disfrutas de la plenitud de tu juventud y una promesa para ti cuando te apoyes en tu bastón y te tambalees hacia la tumba. Es Biblos, el Libro, el libro de todos los días, lleno de sabiduría para cada día de la semana, durante todo el año. Y cuando el ciclo de la vida se complete, verás cómo el Libro se adaptó igualmente a los niños y al anciano cuya vida está llegando a su fin.
+
+Quizás, querido amigo, digas: «Sé qué camino debo seguir. Sé a quién debo amar y confío en que se me ha instruido sobre lo que debo creer; ¡por todo esto valoro muchísimo la Biblia! Pero lo que realmente necesito es la fortaleza de mis convicciones, la fuerza de carácter que me permita seguir los caminos que sé que son correctos». Sí, entiendo lo que quieres decir. Pero ¿dónde más encontrarás verdades tan poderosas como las que resplandecen en las páginas de este bendito Libro? ¿Dónde leerás relatos tan capaces de inspirar valentía como los que contiene este Libro? Sobre todo, en Aquel que es la esencia de este Libro, a quien apuntan todas sus páginas, puedes ver un ejemplo de amor desinteresado y de perfecta consagración a Dios y al hombre, que, si el Espíritu Santo te lo concede, te dará toda la fuerza de carácter y la valentía que puedas necesitar. Si los jóvenes leyeran más la Biblia, no se desviarían tan fácilmente como ahora. Cuando un joven se mantiene firme en su postura y dice: «No puedo ni voy a mentir, ni a cometer actos deshonestos en los negocios, ni a frecuentar lugares de diversión donde no pueda ir con la conciencia tranquila», creo que ha purificado su camino al seguir la Palabra de Dios. ¡Veo aquí el tesoro del valor santo! Al leer estas páginas, comulga con Dios, comulga con Jesucristo, comulga con los santos, mártires y apóstoles, y tú mismo absorberás algo de su determinación y resolución, algo de su celo y energía por lo correcto y lo verdadero.
+
+¡Aquí es donde se forjan los verdaderos hombres! Al leer estas páginas, los débiles se fortalecen y los enanos se convierten en gigantes. Sí, y si dices: «A menudo me siento infeliz; hay un vacío doloroso en mi espíritu, algo que me impide estar completamente satisfecho. Tengo una especie de sanguijuela en mi interior que clama: “¡Dame, dame!”, y aún no he encontrado el alimento con el que calmar su clamor». ¡Es en este Libro donde encontrarás el consuelo que tu espíritu anhela! Aquí se puede aliviar toda pena, satisfacer todo deseo justo y expulsar del espíritu todos los deseos erróneos y las malas pasiones. Cuando el Espíritu Santo aplica este Libro al alma, ¡es alimento para el hambre del hombre y medicina para su enfermedad!
+
+Posando su mano sobre su frente febril, lo refresca hasta devolverle la salud. O, si tiene mucho frío, lo calienta hasta llenarlo de energía divina. De hecho, no hay fin a las bendiciones que este Libro otorga.
+
+«Este es el campo donde yace oculta la perla de precio desconocido. ¡Es divinamente sabio aquel mercader que hace suya la perla!» Este es el mejor de los libros, como dice Christopher Harvey.
+
+"Es el Libro de Dios. ¿Y si yo dijera: Dios de los Libros? Que el que mire
+
+Enojado por esa expresión, por demasiado atrevida, sus pensamientos se ahogan en silencio hasta que encuentre a otra igual.
+
+Cada una de sus páginas es una hoja de oro. Mejor dicho, aquí están los billetes del Cielo, listos para ser canjeados por aquellos que tengan la fe suficiente para ofrecérselos al Dios que los emitió, para que Él enriquezca sus almas con toda clase de dicha. Esto, pues, es lo mejor: «La Ley de su Dios».
+
+II. Ahora bien, en segundo lugar, tenemos lo mejor EN EL MEJOR LUGAR: "La ley de su Dios está en su corazón". ¿Qué significa esto?
+
+Significa, en primer lugar, que lo ama. Aquello que amamos siempre se dice que está en nuestros corazones, y la razón por la que lo ama se da en el texto: «La ley de su Dios» —no simplemente la Ley de Dios, fíjense— sino «La ley de su Dios». Los hombres no aman la Ley de Dios hasta que saben que Él es su Dios. ¡Bendita sea, en verdad, esta preciosa posesión que Dios nos da primero en Él mismo, y luego en su Palabra! ¿Acaso no les gusta leer un libro escrito por un amigo cercano y querido? Sin duda, les resultará mucho más interesante que las obras de desconocidos. Pueden pasar por delante de cien libros en un puesto o en una librería, pero si ven un libro escrito por alguien con quien jugaban, o quizás por alguien aún más cercano y querido, ¡se interesan por él al instante! Así sucede con este bendito Libro escrito por nuestro Padre Celestial, este Libro que nos habla de nuestro Hermano mayor, este Libro en el que el Espíritu Divino insufló aliento de vida y sobre el cual Él siempre brilla como el gran Iluminador. ¡Este Libro siempre debe ser indescriptiblemente querido para nosotros! ¡Cuán querida ha sido la Biblia para los santos de Dios en épocas pasadas! Incluso arriesgaron sus vidas antes que desprenderse de ella, y muchos de ellos murieron como mártires por traducirla y transmitir sus mensajes a otros. Y este Libro es igualmente querido para nosotros. Antes que renunciar a la más mínima pizca de su enseñanza inspirada, confío en que estaríamos dispuestos a ir a la hoguera como lo hicieron nuestros valientes antepasados ​​en tiempos de la cruel Reina María. ¡Preciosa Biblia, estás en nuestros corazones porque te amamos!
+
+Pero David quería decir algo más. La Ley de su Dios estaba en su corazón para ser recordada y amada. Pronto olvidamos lo que solo aprendemos intelectualmente, por eso les decimos a nuestros hijos que aprendan las cosas "de memoria". Lo que está escrito en la mente puede borrarse, pero lo que está escrito en el corazón permanece allí. Ni la enfermedad, ni la muerte, ni el diablo mismo, pueden jamás arrebatarnos lo que está en nuestros corazones. Hemos conocido personas gravemente enfermas que sufren pérdida de memoria, y esa es una pérdida muy seria. Pero también hemos visto cómo conservan intactos sus recuerdos de las cosas espirituales incluso cuando han olvidado a sus propios esposos o esposas, tan extrañamente la mente o el corazón se aferran con mayor firmeza a aquello que está grabado más profundamente en ellos. Si tienes la Palabra de Dios en tu corazón, no importará quién intente arrebatártela. ¡Ni todos los jesuitas, dentro o fuera del infierno, podrían arrancarle a un hombre el Evangelio que está escrito en su corazón! Podrían fácilmente apartar a algunas personas de su credo, pues no es más que un credo, vagamente arraigado en sus mentes. Pero la Verdad que realmente ha penetrado en el corazón de un hombre, ¡ni Satanás ni todas sus huestes podrían arrebatársela jamás! Asegúrate, pues, de que la Ley de tu Dios esté en tu corazón, afectándote y motivándote con tal fuerza, que permanezca tan tenazmente en tu memoria que jamás puedas abandonarla.
+
+La frase «La Ley de su Dios está en su corazón» tiene un tercer significado: obedecerla, pues el corazón es el órgano más influyente del cuerpo. Lo que se hace en el corazón afecta a cada parte del ser humano. Una enfermedad en el corazón impide que el ser humano, en su totalidad, esté bien. Si los afectos del corazón están puestos en Dios, todo está bien, pues la intención, el motivo, guía al ser humano. «Como piensa en su corazón, así es él». Si los ojos de tu corazón son puros, todo tu cuerpo estará lleno de luz. Pero si los ojos de tu corazón son malvados, todo tu cuerpo estará lleno de oscuridad. Si la Ley de Dios está en el corazón, entonces cada latido de ese órgano cerebral afectará al ser humano en su totalidad. Si el ser humano ha llevado una vida malvada, será transformado por completo. Y si, por la gracia de Dios, ha sido mejor que otros, la Ley de su Dios obrará en su corazón y en su vida, y hará por él todo lo que bien podría desear al obedecerla.
+
+Tener la Ley de Dios en el corazón significa, de hecho, vivir conforme a ella; tener el Evangelio como alimento del alma y a Cristo, el del Evangelio, como esperanza para la eternidad. El corazón es aquello por lo que vivimos; por lo tanto, si la Ley de Dios está en nuestro corazón, viviremos conforme a ella y obtendremos de ella nuestro consuelo y sustento. Que cada uno juzgue hasta qué punto esto es cierto en su caso. No somos perfectos, pero deseamos serlo, y esto demuestra que la Ley de nuestro Dios está en nuestro corazón. Pecamos, pero nos afligimos por pecar, y esto demuestra que hay en nosotros un anhelo de santidad perfecta. Decimos, con el apóstol Pablo: «El querer está en mí, pero no el hacer el bien... Cuando quiero hacer el bien, el mal está presente en mí». Sin embargo, ese querer y ese querer demuestran que nuestro corazón lleva la Ley de Dios dentro. Dios los mira, queridos amigos, muy de acuerdo con lo que desean ser. Y si en tu alma hay fuertes anhelos de lo perfecto, Él acepta esos deseos y te bendice por medio de Cristo Jesús, su Hijo. John Bunyan solía expresarlo en una de sus sencillas alegorías de esta manera: «Necesitas que un hombre traiga un médico y le pides que se dé prisa. Entonces monta su caballo, pero es un animal cojo y débil, que no puede ir rápido. Sin embargo, ves que tu hombre volaría si pudiera, pues lo azota y espolea con todas sus fuerzas para intentar que avance. Así que», dice Bunyan, «el Señor a menudo ve que el espíritu está dispuesto a esforzarse, pero la carne es débil, como el caballo cojo. Él ve lo que sus siervos desearían ser y los acepta como si ya lo fueran». ¡Qué suerte tenemos de tener un Maestro tan misericordioso que ve con tan buenos ojos nuestro servicio imperfecto! Hermanos y hermanas, tengan la Ley de Dios en sus corazones, y aunque hoy sean insensatos, mañana vencerán algunas de esas insensateces. Y, por la gracia de Dios, seguirán venciendo cada vez más, hasta que la Ley, escrita en sus corazones, esté también escrita en todos sus miembros, y sean presentados sin mancha ni defecto ante el Trono de Dios.
+
+III. Ahora debo pasar al último punto, a saber, EL MEJOR RESULTADO: "Ninguno de sus pasos resbalará".
+
+Aquí tenemos a un hombre que lleva la Palabra de Dios en su corazón, y se nota que cuida cada paso. Un paso es algo insignificante. Debemos dar cientos de pasos para caminar una milla, pero los hombres de bien se fijan en los pequeños detalles. El hombre que lleva la Ley de Dios en su corazón es escrupuloso y concienzudo con sus pensamientos e imaginaciones, así como con sus palabras y acciones. Por lo tanto, la promesa del texto le viene como anillo al dedo, pues es una promesa sobre las pequeñas cosas: «Ninguno de sus pasos resbalará». Recuerdo —o mejor dicho, espero que aún me pase— que justo después de mi conversión, casi temía poner un pie delante del otro por miedo a equivocarme. Y a menudo me detenía al hablar, por temor a no decir la palabra adecuada. Esa santa cautela es muy loable en todos los que la poseen. Ojalá muchos más la tuvieran. ¡Qué vida tan ajetreada para algunos! No solo no piensan antes de actuar, ¡sino que ni siquiera parecen pensar después de haber actuado! Se lanzan a ciegas y sin pensar, presumiendo donde deberían estar orando y confiados en sí mismos donde deberían, con profundo arrepentimiento, humillarse ante Dios. Nuestro viejo proverbio dice: «Cuida los centavos, y las libras se cuidarán solas». Y la misma regla se aplica a nuestras acciones. Si somos cuidadosos con nuestras pequeñas acciones, las grandes seguramente serán correctas. ¡Ojalá fuéramos todos muy cuidadosos con nuestra forma de actuar en casa! ¡Ojalá fuéramos cuidadosos con lo que decimos al sentarnos a la mesa del té! Algo tan pequeño como eso puede causar un daño casi infinito. Creo que los peores males del mundo surgen de pequeñas cosas. Se dice que la semilla del mal es tan pequeña como un huevo de mosquito, y así es. Entonces, cuidemos bien esos huevos de mosquito, no sea que eclosionen males mucho mayores.
+
+Creo también que, cuando los cristianos se equivocan, suele ser en algo de lo que se creían completamente seguros, como los hijos de Israel con los gabaonitas. Estas personas llegaron a Gilgal vestidas con ropas viejas, zapatos viejos y ropas desgastadas, y llevando pan seco y mohoso. ¿Qué necesidad había de pedir consejo a Dios? Era tan evidente como el sol al mediodía que venían de muy lejos, deseando formar una alianza con los israelitas por las maravillas que Dios había obrado para su pueblo. Así que ni siquiera Josué oró al respecto, y fue engañado, pues estos gabaonitas eran vecinos cercanos y habían engañado a los israelitas para que formaran una alianza que siempre les suponía un obstáculo en su campaña. Siempre desconfía donde no tienes sospecha y teme donde no tienes miedo; teme especialmente a quien te dice que no tienes por qué temerle. Un hombre le dijo a un amigo mío: «Necesito un préstamo de tanto dinero. Sabes que soy una buena persona. Llevo muchos años perteneciendo a una iglesia cristiana. No soy como Fulano y Mengano, que últimamente han fracasado. Puedes confiar en mí, lo sabes».
+
+—No —dijo mi amigo—, no le confiaría ni media corona a un hombre cualquiera. Y tenía razón, ¡porque quienes confiaron en él lo perdieron todo! Hay que tener mucho cuidado en casos así. Si se trata de gente conocida por ser sinvergüenza, no hace falta estar alerta, pero si se trata de sinvergüenzas que se hacen pasar por hombres honrados, hay que estar muy atento o seguro que te engañarán. Han ocultado su naturaleza de lobo con piel de cordero, ¡así que más vale que veas qué se esconde debajo!
+
+Cuando David dice: «La ley de su Dios está en su corazón; ninguno de sus pasos resbalará», ¿qué quiere decir con esa última frase? Quiere decir que Dios lo guiará. Como tiene la Ley de Dios en su corazón, ¡tendrá la guía de Dios para sus pasos! En el versículo 23, David dice: «Los pasos del hombre bueno son ordenados por el Señor, y él se deleita en su camino». Cuando un hombre realmente lleva la Ley de Dios en su corazón, Dios cuidará de que no la lleve a ningún lugar malo, porque, como David continúa diciendo, «el Señor lo sostiene con su mano». A todo hombre, sea quien sea, le sobrevendrán repentinos ataques de tentación; pero si la Ley de su Dios está en su corazón, estará prevenido y preparado para ellos. También vendrán largos asedios de tentación, y muchos han caído poco a poco. Pero si la Ley de su Dios está en su corazón, estará a salvo incluso de ellas. A veces, surgirá la tentación que produce la soledad, cuando Satanás lo incitará a hacer el mal. Como nadie lo observa, ¿acaso no podría obrar mal? Pero, con la Ley de su Dios en su corazón, no hará nada malo, aunque jamás lo descubran; ¡esa Ley en su corazón es un freno suficiente para apartarlo del mal! A veces se sentirá perplejo. Me pregunto si todo hombre de negocios aquí no se encuentra, en algún momento, desconcertado sobre qué debe hacer. Anhela hacer lo correcto, pero no sabe cuál de dos caminos es el adecuado. Pues bien, ese es el momento de dejar que la Ley de tu Dios, que está en tu corazón, sea como una brújula para ti, y de invocar esta promesa y decir: «Oh Señor, has dicho que, como tu Ley está en mi corazón, ninguno de mis pasos resbalará. Cumple tu palabra para con tu siervo, en la cual me has hecho poner mi esperanza».
+
+Que tus pasos se desvíen sería deshonrar tu reputación. ¡Cuántos hombres que se han mantenido firmes durante un tiempo, ya sea en la Iglesia cristiana o en los negocios, se han desviado de esta manera! Recuerdo haber leído, hace algunos años, cuando se produjeron tristes fracasos de este tipo, que «ni las corbatas blancas de Exeter Hall ni los abrigos grises de Lombard Street pudieron impedir que algunos hombres se convirtieran en grandes sinvergüenzas». Y, a veces, ha habido demasiadas razones para decirlo. Pero la Ley de Dios en el corazón es mejor que una corbata blanca al cuello o un abrigo gris a la espalda, pues mantiene los pasos de los hombres para que no deshonren a su Dios. Las pruebas pueden llegar a quienes viven más cerca de Dios —posiblemente llegarán aún más por haber vivido cerca de Él—, pero no habrá mancha en el carácter ni caída de la integridad que causa tanta tristeza. ¡Un verdadero cristiano preferiría morir antes que permitir que esto sucediera! Y podrá consolarse con la seguridad de que si la Ley de su Dios está en su corazón, "ninguno de sus pasos resbalará".
+
+Ni caerá en la desesperación. Puede temblar, puede tambalearse, puede estar a punto de caer, pero como tiene la Ley de su Dios en su corazón, se pondrá de pie de nuevo y seguirá adelante. Espero que todos los que tenéis que librar la buena batalla de la fe y peregrinar al Cielo, encuentren en este texto todo el consuelo posible. Habéis pedido tener la Ley de vuestro Dios en vuestro corazón, y allí está. ¡Pues bien, seréis sostenidos! Vas a vivir, joven, donde no hay otros cristianos, pero tus pasos no resbalarán, porque la Ley de tu Dios está en tu corazón. Vas a ocupar, hermano mío, un puesto donde tendrás a tu cargo a un gran número de personas, y apenas sabes cómo las gestionarás. Pero con la Ley de tu Dios en tu corazón, ninguno de tus pasos resbalará. Mi joven hermana, vas a vivir con parientes impíos donde apenas tendrás oportunidad de orar en privado; sin embargo, con la Ley de tu Dios en tu corazón, ¡ninguno de tus pasos resbalará! Mi joven hermano, estás a punto de convertirte en pastor de una gran iglesia y tiemblas por miedo a cometer un grave error y deshonrar a Dios. Pero si Su Ley está en tu corazón, ninguno de tus pasos resbalará. ¡No tienes por qué preocuparte por lo resbaladizo del camino si la Ley de tu Dios está en tu corazón! Muchos resbalan cuando el camino no está resbaladizo, y muchos hombres, por la Gracia de Dios, se mantienen firmes donde parece un milagro que se mantengan en pie. Los hombres no están en peligro en proporción a su posición, sino que están en peligro o a salvo según la medida de su Gracia. Si la Ley de tu Dios está en tu corazón, ¡podrás enfrentarte a un mundo armado sin temor! Si Dios te convirtiera en el líder de mil escuadrones de los ejércitos del Cielo sobre sus caballos blancos, serías capaz de comandarlos a todos si tuvieras Su Ley en tu corazón y te entregaras completamente a Él.
+
+Tenga en cuenta también que si lleva la Ley de su Dios en su corazón, esto implica que también lleva allí al Legislador, pues no puede separar al Legislador Divino de su Ley. ¿Lo ama? ¿Confía en Él? ¿Le resulta agradable su nombre? ¿Es como ungüento que endulza su espíritu? Si ama a quien le da la Ley, debe amar la Ley que Él le da. Estamos bajo la Ley —la Ley de la Gracia— de Jesucristo. Su yugo es fácil y su carga ligera para quienes confían en Él y lo aman. Si confía en Él y lo ama, eso demuestra que lleva su Ley en su corazón.
+
+Si llevas la Ley de tu Dios en tu corazón, también llevas allí al gran Maestro de la Ley, el Espíritu Santo. Eres consciente de sus consuelos, a veces de sus reprensiones y a menudo de sus ánimos. ¿Cómo te va en este sentido? ¿Sabes algo acerca de la obra del Espíritu Santo en tu corazón? Lamentablemente, hay muchos que no saben que existe el Espíritu Santo, pues nunca han sentido su poder. Pero la Ley de Dios nunca está en el corazón hasta que el Espíritu Santo la deposita allí; y donde Él deposita esa Ley, permanece con ella, para abrir nuestro entendimiento para que podamos recibir las Escrituras y para abrir las Escrituras para que nuestro entendimiento las reciba. ¿Qué sabes acerca de Dios Hijo? ¿Es Él tu Salvador?
+
+¿Qué sabes del Espíritu Santo? ¿Es Él tu Vivificador y Consolador? Si lo es, ten buen ánimo, pues ninguno de tus pasos resbalará. Pero si no lo es, y si rechazas esta Ley de Dios, recuerda aquel solemne texto: «Sus pies resbalarán a su debido tiempo». Se yerguen en su prosperidad. Son grandes, famosos, felices, rebosantes de alegría, y solemos envidiarlos al verlos en sus altos cargos. ¡Pero cuidado! ¡Están parados sobre un Alpes de hielo! El camino que recorren es muy estrecho y, en un instante, cuando menos lo esperan, sus pies resbalarán y caerán en el abismo sin fondo. Caen, perdidos, perdidos, ¡PERDIDOS! Los altos cargos que una vez ocuparon solo aumentan la profundidad de su caída. Pasan de sus copas de vino rebosantes a anhelar una gota de agua para refrescar sus lenguas resecas. ¡Pasan de los manjares de la mesa de Dives a las más extremas desgracias del infierno! Lázaro una vez les pidió migajas, ¡y ahora ellos con gusto se convertirían en mendigos y le pedirían la bendición del mismísimo Lázaro! Su día se ha convertido en noche, su gloria en vergüenza, sus banquetes en miserias, sus honores en vergüenza y desprecio eternos. Sean sabios, hombres y mujeres, y busquen a su Salvador ahora, no sea que, como un sueño al despertar, la belleza de su presente vida mortal se desvanezca y no quede más que la espantosa forma de una existencia desperdiciada, castigada para siempre con los golpes de la terrible ira de Jehová.
+
+«¡Pecadores, busquen su gracia, cuya ira no pueden soportar! ¡Refugiense en su cruz y encuentren allí la salvación! Así se quitará la maldición por la cual el Salvador derramó su sangre, y el último y terrible día derramará sus bendiciones sobre ustedes.» ¡Que Dios los bendiga a todos, por amor de Jesucristo! Amén.
+
+EXPOSICIÓN DE CH SPURGEON:
+
+SALMO 37.
+
+Este es uno de los Salmos de David que a menudo han animado a los santos de Dios cuando se han sentido perplejos por la prosperidad de los impíos y sus propios problemas.
+
+Versículos 1, 2. No te inquietes por los malhechores, ni tengas envidia de los que obran iniquidad. Porque pronto serán cortados como la hierba y se marchitarán como la hierba verde. ¿Y si su suerte es dulce? Pero considera cuán breve es. Ningún hombre sabio envidia al toro que está siendo engordado, pues sabe que es engordado para el matadero. Nadie envidiará los placeres de los impíos cuando recuerden cuán transitorios deben ser. Déjalos que los tengan, y exhorto a todos los cristianos a que hagan todo lo posible por hacer felices a los impíos. Este es el único tiempo feliz que podrán tener a menos que se arrepientan y se vuelvan al Señor. Así que no los hagas infelices, sino contribuye con todo lo que puedas a la poca dicha que conocerán, porque pronto terminará. Ciertamente, si eres hijo de Dios, no tienes motivo para envidiarlos.
+
+3, 4. Confía en el SEÑOR y haz el bien; así habitarás en la tierra y ciertamente serás alimentado. Deléitate asimismo en el SEÑOR, y Él te concederá los deseos de tu corazón. He aquí un deber que es tanto un placer como un deber; no, es incluso más un placer que un deber: «Deléitate asimismo en el Señor». He aquí un mandamiento para ser feliz de la manera más segura imaginable. De todos los deleites, el más delicioso es el deleite en Dios, y a esto se nos ordena. Pero qué privilegio es lo que se le añade: «Él te concederá los deseos de tu corazón». ¿Por qué? Porque, cuando te deleitas en Dios, tus deseos serán aquellos que Él puede conceder con seguridad. Al deleitarte en Él, solo desearás aquello que es para su gloria y entonces, sin ninguna restricción, Él podrá prometerte y concederte los deseos de tu corazón.
+
+5. Encomienda tu camino al SEÑOR. Con fe, pero sin temor, pon tu mano en la suya y síguelo adondequiera que te lleve.
+
+5-7. Confía también en Él, y Él lo hará. Él hará resplandecer tu justicia como la luz, y tu derecho como el mediodía. Descansa en el SEÑOR. ¡Oh, qué dulces preceptos son estos! —más fáciles de leer y oír que de practicar—, sin embargo, si se nos concede la gracia, los encontraremos benditamente fáciles de practicar. Ciertamente, si es fácil descansar en cualquier lugar, debe ser fácil «descansar en el Señor». No hay otro lugar de descanso como aquel donde la Omnipotencia y el amor eterno se unen dulcemente: «Descansa en el Señor».
+
+7-9. Y esperad pacientemente en Él; no os inquietéis por el que prospera en su camino, por el hombre que lleva a cabo planes malvados. Dejad la ira y abandonad el enojo; no os inquietéis para hacer el mal, porque los malhechores serán exterminados, pero los que esperan en Jehová heredarán la tierra. Creo que, en cierto sentido, el hijo de Dios obtiene lo mejor de ambos mundos. Puede que en este mundo no obtenga lo que los impíos consideran lo mejor. Y en cuanto al bien mundano, a menudo obtiene lo peor, pero Dios hace que su comida de hierbas sea más dulce para él que el buey muerto para el impío. Si supiera que moriría como un perro, aun así desearía ser cristiano. Si no hubiera más allá, ni mundo venidero, e incluso si mi suerte, juzgada según los hombres, fuera la más miserable de todas, aun así, tener a Dios como mi amigo aquí habría convertido incluso esa miseria en felicidad.
+
+«¡Oh Dios de Amor, cuán dichosos son aquellos que se deleitan en Tus caminos! ¡Tu presencia los guía todo el día y los alegra toda la noche!»
+
+10. Dentro de poco, el impío ya no existirá; buscarás su lugar, pero no lo encontrarás. ¡Cuántas veces incluso el lugar donde vivía —su casa— se convierte en ruinas! ¡El mismo palacio donde habitaba el tirano es incendiado o destruido de alguna otra manera! ¡Parece que la decadencia se deleita en obrar con el paso del tiempo sobre los palacios de los déspotas!
+
+11. Pero los mansos heredarán la tierra y se deleitarán en la abundancia de paz. Esta profecía se cumplirá plenamente en los últimos días, pero ya se está cumpliendo. ¿Quién no ve que el hombre que realmente disfruta de la vida y del mundo es, después de todo, el cristiano manso y humilde? Aquel pastor de Salisbury Plain, del que leíamos en nuestra infancia, cuando le preguntaron qué pensaba del clima, respondió que era buen tiempo, pues Dios lo había enviado; y cualquier clima le agradaba si agradaba a Dios. Cualquiera puede ver que un hombre así goza de buena salud y que hereda la tierra y posee mucho más de lo que vale la pena tener —a saber, tranquilidad y paz interior— que el dueño de vastas extensiones de tierra que no tiene verdadero descanso en el Señor.
+
+12-19. El impío trama contra el justo, y rechina los dientes contra él. El Señor se reirá de él, porque ve que le llega su día. Los impíos han desenvainado la espada y tensado el arco para derribar al pobre y al necesitado, y para matar a los de conducta recta. Su espada les atravesará el corazón, y sus arcos se quebrarán. Lo poco que tiene el justo es mejor que las riquezas de muchos impíos. Porque los brazos de los impíos serán quebrados, pero el Señor sostiene a los justos. El Señor conoce los días de los rectos, y su herencia será para siempre. No serán avergonzados en el tiempo malo, y en los días de hambre serán saciados. Permítanme leer de nuevo el versículo 19, para que cualquier hijo de Dios aquí, que se encuentre en grandes dificultades, pueda aferrarse a él: «No serán avergonzados en el tiempo malo, y en los días de hambre serán saciados».
+
+20-25. Pero los impíos perecerán, y los enemigos del SEÑOR serán como la grasa de los corderos: se consumirán, se convertirán en humo. El impío pide prestado y no paga; pero el justo tiene misericordia y da. Porque los que son bendecidos por Él heredarán la tierra, y los que son malditos por Él serán cortados. Los pasos de un buen
+
+El hombre es ordenado por el SEÑOR, y Él se complace en su camino. Aunque caiga, no quedará completamente derribado, porque el SEÑOR lo sostiene con su mano. Fui joven, y ahora soy viejo; pero no he visto al justo desamparado, ni a su descendencia mendigando pan. Hemos comentado a menudo aquí que nosotros también, aunque no somos viejos, nunca hemos visto al justo desamparado, y no creemos que el hombre o la mujer más ancianos de aquí lo hayan visto jamás. David dice que no había visto a la descendencia del justo mendigando pan. Bueno, era rey, así que no era probable que viera a muchos pobres, pero nosotros sí hemos visto varias veces a la descendencia del justo mendigando pan. No es algo común, pero lo hemos visto; y cuando la descendencia del justo se porta mal, cuando deshonra el nombre de su padre, tendrá que mendigar pan igual que los hijos de los demás. Caerán en la pobreza por la ociosidad y la bebida, igual que los demás. Y he tenido la desgracia, dentro de estas mismas paredes, de tener que brindar auxilio a los hijos indignos y depravados de pastores cristianos de cuya piedad no podía dudar, y algunos de los cuales ahora están en el Cielo. Los hijos de estos hombres buenos han andado en contra de Dios, ¡y Dios ha andado en contra de ellos! ¡A menudo he esperado que la pobreza que veía pudiera ser el medio para llevarlos a buscar al Dios de sus padres!
+
+Tú que temes al Señor puedes confiar en esto: si el Señor te ayuda a educar bien a tus hijos, Él cuidará de ellos. Si son verdaderamente descendientes de justos, practicando la justicia, tus hijos no mendigarán pan, pues el Señor proveerá para ellos. Verás que Dios siempre cuida de los hijos de quienes le sirven con fidelidad. Parece decirles: «Ocúpate de mis asuntos, y yo me ocuparé de los tuyos. Si cuidas de mis hijos, yo cuidaré de los tuyos». Si servimos al Señor con todo nuestro corazón, podemos estar seguros de que el Dios de los padres será también el Dios de los hijos.
+
+26-40. Él es siempre misericordioso, y presta, y su descendencia es bendita. Apártate del mal, y haz el bien, y morarás para siempre. Porque el Señor ama la justicia, y no abandona a sus santos; ellos son preservados para siempre; pero la descendencia de los impíos será cortada. Los justos heredarán la tierra, y morarán en ella para siempre. La boca del justo habla sabiduría, y su lengua habla de justicia. La ley de su Dios está en su corazón; ninguno de sus pasos resbalará. El impío vigila al justo, y busca matarlo. El SEÑOR no lo dejará en su mano, ni lo condenará cuando sea juzgado. Espera en el Señor, y guarda su camino, y él te exaltará para heredar la tierra; cuando los impíos sean cortados, lo verás. He visto al impío en gran poder, y extendiéndose como un laurel verde. Pero pasó, y he aquí, no estaba; sí, lo busqué, pero no lo pude hallar. Fíjense en el hombre íntegro y observen al recto, porque el fin de ese hombre es la paz. Pero los transgresores serán destruidos juntos; el fin de los impíos será exterminado. Pero la salvación de los justos viene del Señor; Él es su fortaleza en el tiempo de angustia. Y el Señor los ayudará y los librará; los librará de los impíos y los salvará, porque en Él confían.`;
+
+/* Textos que vienen con el lector; a estos se suman los que abras tú. */
+const BIBLIOTECA = [
+  { id:"guia",     nombre:"Cómo usar este lector",                          texto:DEMO },
+  { id:"spurgeon", nombre:"Lo mejor en el mejor lugar · C. H. Spurgeon",    texto:SERMON }
+];
 
 const S = { chunks:[], i:0, playing:false, paused:false, gen:0, words:0 };
 
@@ -453,6 +565,70 @@ function stats(){
     " frases · ≈ " + min + " min en voz a " + Number($("#rate").value).toFixed(1) + "×";
 }
 
+/* ── Biblioteca: los incluidos más los tuyos ─────────────────── */
+const lista = $("#lista"), quitarBtn = $("#quitarBtn");
+let propios = [];
+function leerPropios(){
+  try{ propios = JSON.parse(store.get("propios", "[]")) || []; }catch(e){ propios = []; }
+  const viejo = store.get("txt", "");                  /* texto de versiones anteriores */
+  if(viejo){
+    propios.unshift({ id:"u"+Date.now(), nombre:store.get("nom","Tu texto"), texto:viejo });
+    store.set("txt", ""); store.set("nom", "");
+    guardarPropios();
+  }
+}
+function guardarPropios(){
+  try{ store.set("propios", JSON.stringify(propios)); }
+  catch(e){ aviso("No se pudo guardar el texto en este navegador: no hay espacio. Se lee igual mientras no cierres la página."); }
+}
+function porId(id){
+  return propios.find(t => t.id === id) || BIBLIOTECA.find(t => t.id === id);
+}
+function pintarLista(sel){
+  lista.textContent = "";
+  if(propios.length){
+    const g = document.createElement("optgroup");
+    g.label = "Tus textos";
+    propios.forEach(t => {
+      const o = document.createElement("option");
+      o.value = t.id; o.textContent = t.nombre;
+      g.appendChild(o);
+    });
+    lista.appendChild(g);
+  }
+  const g2 = document.createElement("optgroup");
+  g2.label = "Incluidos";
+  BIBLIOTECA.forEach(t => {
+    const o = document.createElement("option");
+    o.value = t.id; o.textContent = t.nombre;
+    g2.appendChild(o);
+  });
+  lista.appendChild(g2);
+  lista.value = sel;
+  quitarBtn.hidden = !propios.some(t => t.id === sel);
+}
+function seleccionar(id, cerrar){
+  const t = porId(id) || BIBLIOTECA[0];
+  store.set("sel", t.id);
+  pintarLista(t.id);
+  render(t.texto, t.nombre);
+  if(cerrar) abrirPanel(false);
+}
+function agregar(nombre, texto){
+  const id = "u" + Date.now();
+  propios.unshift({ id:id, nombre:nombre, texto:String(texto).slice(0, 300000) });
+  propios = propios.slice(0, 8);                       /* se guardan los ocho más recientes */
+  guardarPropios();
+  seleccionar(id, true);
+}
+lista.addEventListener("change", () => seleccionar(lista.value, true));
+quitarBtn.addEventListener("click", () => {
+  const id = lista.value;
+  propios = propios.filter(t => t.id !== id);
+  guardarPropios();
+  seleccionar(propios.length ? propios[0].id : BIBLIOTECA[0].id);
+});
+
 /* ── Abrir archivos ──────────────────────────────────────────── */
 function cargarArchivo(f){
   if(!f) return;
@@ -460,10 +636,8 @@ function cargarArchivo(f){
   if(!ok){ aviso("Ese archivo no es de texto. Usa un archivo <b>.txt</b> (o .md); para un PDF o un Word, guarda antes el contenido como texto plano."); return; }
   const r = new FileReader();
   r.onload = () => {
-    render(r.result, f.name);
-    store.set("txt", String(r.result).slice(0, 300000));
-    store.set("nom", f.name);
-    aviso(""); abrirPanel(false);
+    aviso("");
+    agregar(f.name.replace(/\.(txt|md|markdown|text|log|csv)$/i, ""), r.result);
   };
   r.onerror = () => aviso("No se pudo leer el archivo. Intenta abrirlo de nuevo.");
   r.readAsText(f, "utf-8");
@@ -491,9 +665,9 @@ $("#cancelarPegar").addEventListener("click", () => { $("#pegar").hidden = true;
 $("#usarTexto").addEventListener("click", () => {
   const t = $("#pegarArea").value.trim();
   if(!t){ aviso("Escribe o pega algún texto antes de continuar."); return; }
-  render(t, "Texto pegado");
-  store.set("txt", t.slice(0, 300000)); store.set("nom", "Texto pegado");
-  $("#pegar").hidden = true; aviso(""); abrirPanel(false);
+  const titulo = (t.split("\n")[0] || "Texto pegado").trim().slice(0, 50) || "Texto pegado";
+  $("#pegar").hidden = true; $("#pegarArea").value = ""; aviso("");
+  agregar(titulo, t);
 });
 
 /* ── Voces del sistema ───────────────────────────────────────── */
@@ -717,7 +891,7 @@ $("#rate").value = store.get("vel","1");
 $("#vol").value = store.get("vol","1");
 $("#rateVal").textContent = rate().toFixed(1) + "×";
 $("#volVal").textContent = Math.round(volume()*100) + " %";
-const guardado = store.get("txt", "");
-render(guardado || DEMO, guardado ? store.get("nom","Tu texto") : "Texto de ejemplo");
+leerPropios();
+seleccionar(store.get("sel", "guia"));
 })();
 </script>
