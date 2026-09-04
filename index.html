@@ -326,6 +326,7 @@ Todo ocurre dentro de tu navegador. El archivo que abres no se envía a ningún 
 
 /* ── Estado ──────────────────────────────────────────────────── */
 const S = { chunks:[], i:0, playing:false, paused:false, gen:0, words:0 };
+let piperLib = null, piperListo = false, piperPedido = false, audioLibre = false;
 
 /* ── Temas ───────────────────────────────────────────────────── */
 const THEMES = [
@@ -626,7 +627,6 @@ const PIPER_LIB = "https://cdn.jsdelivr.net/npm/@diffusionstudio/vits-web@1.0.3/
 const audio = new Audio();
 audio.preservesPitch = audio.mozPreservesPitch = audio.webkitPreservesPitch = true;
 const piperCache = new Map();
-let piperLib = null, piperListo = false, piperPedido = false, audioLibre = false;
 
 /* iOS solo deja sonar audio que nació de un toque: lo destrabamos en el primero. */
 function desbloquearAudio(){
