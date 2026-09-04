@@ -590,7 +590,7 @@ function loadVoices(){
   }
   if(idx < 0) idx = voices.length ? 0 : -1;
   if(idx >= 0){ voiceSel.value = idx; voice = voices[idx]; }
-  if(motor === "piper" && piperListo) voiceSel.value = "piper";
+  if(piperPedido || (motor === "piper" && piperListo)) voiceSel.value = "piper";
 
   if(!voices.length){
     note("Tu navegador no tiene voces instaladas para leer en voz alta. En Windows y Android puedes agregar una voz en español desde los ajustes del sistema.", true);
@@ -626,7 +626,7 @@ const PIPER_LIB = "https://cdn.jsdelivr.net/npm/@diffusionstudio/vits-web@1.0.3/
 const audio = new Audio();
 audio.preservesPitch = audio.mozPreservesPitch = audio.webkitPreservesPitch = true;
 const piperCache = new Map();
-let piperLib = null, piperListo = false, audioLibre = false;
+let piperLib = null, piperListo = false, piperPedido = false, audioLibre = false;
 
 /* iOS solo deja sonar audio que nació de un toque: lo destrabamos en el primero. */
 function desbloquearAudio(){
@@ -646,6 +646,8 @@ async function activarPiper(){
   stop();
   try{
     $("#progText").textContent = "Cargando el motor de voz…";
+    piperPedido = true;
+    voiceSel.value = "piper";
     const tts = await cargarPiper();
     if((await tts.stored()).indexOf(PIPER_ID) < 0){
       note("Descargando la voz <b>" + PIPER_ID + "</b> · 63 MB. Solo la primera vez: después queda guardada en este navegador y funciona sin conexión.", true);
@@ -657,10 +659,11 @@ async function activarPiper(){
       });
     }
     motor = "piper"; piperListo = true; store.set("motor", "piper");
+    voiceSel.value = "piper";
     note("Voz <b>" + PIPER_ID + "</b> lista. Suena igual en cualquier equipo y ya no necesita conexión.", true);
     progress();
   }catch(e){
-    motor = "sistema"; piperListo = false; piperLib = null;
+    motor = "sistema"; piperListo = false; piperPedido = false; piperLib = null;
     store.set("motor", "sistema");
     if(voices.length){ voiceSel.value = 0; voice = voices[0]; }
     note("No se pudo activar la voz descargable aquí: " + esc(e && e.message ? e.message : e) +
