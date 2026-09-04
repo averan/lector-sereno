@@ -624,6 +624,8 @@ if(synth){
    queda guardado en este navegador y después funciona sin conexión.   */
 const PIPER_ID  = "es_MX-claude-high";
 const PIPER_LIB = "https://cdn.jsdelivr.net/npm/@diffusionstudio/vits-web@1.0.3/+esm";
+const PIPER_HF  = "https://huggingface.co/diffusionstudio/piper-voices/resolve/main";
+const PIPER_RUTA = "es/es_MX/claude/high/es_MX-claude-high.onnx";
 const audio = new Audio();
 audio.preservesPitch = audio.mozPreservesPitch = audio.webkitPreservesPitch = true;
 const piperCache = new Map();
@@ -638,25 +640,69 @@ function desbloquearAudio(){
     if(pr) pr.then(() => { audio.pause(); audio.currentTime = 0; }).catch(() => {});
   }catch(e){}
 }
+async function guardarModelo(onProgress){
+  const root = await navigator.storage.getDirectory();
+  const dir = await root.getDirectoryHandle("piper", { create: true });
+  const archivos = [PIPER_HF + "/" + PIPER_RUTA + ".json", PIPER_HF + "/" + PIPER_RUTA];
+  for(const url of archivos){
+    const nombre = url.split("/").pop();
+    const res = await fetch(url);
+    if(!res.ok) throw new Error("HTTP " + res.status + " al pedir " + nombre);
+    const total = +(res.headers.get("Content-Length") || 0);
+    const handle = await dir.getFileHandle(nombre, { create: true });
+    const salida = await handle.createWritable();
+    try{
+      const lector = res.body.getReader();
+      let recibido = 0;
+      while(true){
+        const trozo = await lector.read();
+        if(trozo.done) break;
+        await salida.write(trozo.value);      /* al disco, sin acumular en memoria */
+        recibido += trozo.value.length;
+        if(total > 100000) onProgress(recibido, total);
+      }
+      await salida.close();
+      if(total && recibido !== total) throw new Error("descarga incompleta de " + nombre);
+    }catch(e){
+      try{ await salida.abort(); }catch(x){}
+      try{ await dir.removeEntry(nombre); }catch(x){}
+      throw e;
+    }
+  }
+}
 async function cargarPiper(){
   if(!piperLib) piperLib = await import(PIPER_LIB);
   return piperLib;
 }
 async function activarPiper(){
   stop();
+  let paso = "iniciar";
   try{
     $("#progText").textContent = "Cargando el motor de voz…";
     piperPedido = true;
     voiceSel.value = "piper";
+    paso = "cargar el motor";
     const tts = await cargarPiper();
-    if((await tts.stored()).indexOf(PIPER_ID) < 0){
+
+    if(store.get("piperOk", "") !== PIPER_ID){
       note("Descargando la voz <b>" + PIPER_ID + "</b> · 63 MB. Solo la primera vez: después queda guardada en este navegador y funciona sin conexión.", true);
-      await tts.download(PIPER_ID, p => {
-        const pct = p.total ? Math.round(p.loaded / p.total * 100) : 0;
+      const avance = (loaded, total) => {
+        const pct = total ? Math.round(loaded / total * 100) : 0;
         $("#progText").textContent = "Descargando la voz · " + pct + " %";
         $("#progPct").textContent = pct + " %";
         $("#progBar").style.width = pct + "%";
-      });
+      };
+      paso = "descargar y guardar la voz";
+      try{ if(navigator.storage && navigator.storage.persist) await navigator.storage.persist(); }catch(e){}
+      if(navigator.storage && navigator.storage.getDirectory){
+        await guardarModelo(avance);                       /* ruta liviana en memoria */
+      }else{
+        await tts.download(PIPER_ID, p => avance(p.loaded, p.total));
+      }
+      paso = "preparar la voz";
+      $("#progText").textContent = "Preparando la voz…";
+      await tts.predict({ text: "Listo.", voiceId: PIPER_ID });   /* prueba real antes de anunciarla */
+      store.set("piperOk", PIPER_ID);
     }
     motor = "piper"; piperListo = true; store.set("motor", "piper");
     voiceSel.value = "piper";
@@ -664,10 +710,14 @@ async function activarPiper(){
     progress();
   }catch(e){
     motor = "sistema"; piperListo = false; piperPedido = false; piperLib = null;
-    store.set("motor", "sistema");
+    store.set("motor", "sistema"); store.set("piperOk", "");
     if(voices.length){ voiceSel.value = 0; voice = voices[0]; }
-    note("No se pudo activar la voz descargable aquí: " + esc(e && e.message ? e.message : e) +
-         ". Se usará la voz del sistema. Suele pasar al abrir el archivo con doble clic (file://), sin conexión, o dentro del enlace compartido.", true);
+    const msg = esc(e && e.message ? e.message : e);
+    const memoria = /memor|quota|space|transient/i.test(msg);
+    note("No se pudo <b>" + paso + "</b>: " + msg + ". Se usará la voz del sistema. " +
+         (memoria
+           ? "A tu navegador le faltó espacio o memoria: cierra otras pestañas y vuelve a intentarlo. En iPhone ayuda añadir la página a la pantalla de inicio, porque ahí Safari le da más espacio a la web."
+           : "Suele pasar sin conexión o al abrir el archivo con doble clic (file://)."), true);
     progress();
   }
 }
@@ -869,7 +919,7 @@ if(store.get("motor", "") === "piper"){
   (async () => {
     try{
       const tts = await cargarPiper();
-      if((await tts.stored()).indexOf(PIPER_ID) >= 0){
+      if(store.get("piperOk", "") === PIPER_ID && (await tts.stored()).indexOf(PIPER_ID) >= 0){
         motor = "piper"; piperListo = true;
         voiceSel.value = "piper";
         note("Voz <b>" + PIPER_ID + "</b> lista, guardada en este navegador.", true);
