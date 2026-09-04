@@ -105,7 +105,6 @@ button{font:inherit; color:inherit; cursor:pointer}
   font-size:10px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
   color:var(--dim); white-space:nowrap;
 }
-.fila{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
 .stats{font-size:12px; color:var(--dim); font-variant-numeric:tabular-nums}
 
 .stepper{display:flex; border:1px solid var(--border); border-radius:8px; overflow:hidden}
@@ -125,16 +124,14 @@ button{font:inherit; color:inherit; cursor:pointer}
 .chip .sw{width:13px; height:13px; border-radius:50%; border:1px solid rgba(128,128,128,.45); flex:none}
 .chip[aria-pressed="true"]{border-color:var(--accent); color:var(--accent); font-weight:600; box-shadow:inset 0 0 0 1px var(--accent)}
 
-.sel, .area{
+.sel{
   width:100%; font:inherit; font-size:13px; color:var(--text);
   background:var(--surface-2); border:1px solid var(--border); border-radius:8px; padding:8px;
 }
-.area{min-height:130px; line-height:1.5; resize:vertical}
 .deslizador{display:grid; gap:5px}
 .deslizador .top{display:flex; justify-content:space-between; align-items:baseline}
 .deslizador .num{font-size:12px; font-weight:600; font-variant-numeric:tabular-nums}
 input[type=range]{width:100%; accent-color:var(--accent); margin:0}
-#pegar[hidden]{display:none}
 
 /* ── Aviso ───────────────────────────────────────────────────── */
 .aviso{
@@ -186,15 +183,6 @@ main{padding:30px 18px 96px}
 .track{height:3px; border-radius:99px; background:var(--surface-2); border:1px solid var(--border); overflow:hidden}
 .track i{display:block; height:100%; width:0; background:var(--accent); transition:width .18s linear}
 
-/* ── Soltar archivo ──────────────────────────────────────────── */
-.drop{
-  position:fixed; inset:0; z-index:60; display:none; place-items:center;
-  background:color-mix(in srgb, var(--bg) 88%, transparent);
-  font-size:16px; font-weight:600;
-}
-.drop.on{display:grid}
-.drop div{border:2px dashed var(--accent); color:var(--accent); border-radius:16px; padding:44px 60px; text-align:center}
-
 @media (max-width:520px){
   .panel{right:8px; left:8px; width:auto; top:52px}
   .brand b{display:none}
@@ -210,7 +198,6 @@ main{padding:30px 18px 96px}
   <span class="brand"><span class="glyph">❧</span><b>Lector Sereno</b></span>
   <select class="selBar" id="lista" aria-label="Texto a leer"></select>
   <button class="btn" id="ajustesBtn" aria-expanded="false" aria-controls="panel">Ajustes <span class="caret">▼</span></button>
-  <input type="file" id="file" accept=".txt,.md,.markdown,text/plain,text/markdown" hidden>
 </header>
 
 <div class="aviso" id="aviso" hidden>
@@ -221,19 +208,7 @@ main{padding:30px 18px 96px}
 <div class="panel" id="panel" hidden>
   <section>
     <span class="lbl">Texto</span>
-    <div class="fila">
-      <button class="btn primary" id="openBtn2">Abrir archivo .txt</button>
-      <button class="btn" id="pegarBtn">Pegar texto</button>
-      <button class="btn" id="quitarBtn" hidden>Quitar</button>
-    </div>
     <p class="stats" id="stats"></p>
-    <div id="pegar" hidden>
-      <textarea class="area" id="pegarArea" placeholder="Pega o escribe aquí el texto que quieras leer…"></textarea>
-      <div class="fila" style="margin-top:8px">
-        <button class="btn primary" id="usarTexto">Usar este texto</button>
-        <button class="btn" id="cancelarPegar">Cancelar</button>
-      </div>
-    </div>
   </section>
 
   <section>
@@ -278,8 +253,6 @@ main{padding:30px 18px 96px}
     <div class="track"><i id="progBar"></i></div>
   </div>
 </footer>
-
-<div class="drop" id="drop"><div>Suelta aquí tu archivo de texto</div></div>
 
 <script>
 (function(){
@@ -463,11 +436,128 @@ Ahora, para concluir. Fíjense bien: esto es lo único que puede deleitar a un h
 
 ¿Acaso no hay hoy en esta casa quienes no pueden deleitarse en Dios? —¿no pueden? —¿no pueden? —¿no pueden? —¿Cómo —dices— puedo deleitarme en Dios? Él está enojado conmigo. Tienes razón, no puedes. ¿Cómo puede deleitarse en Dios aquel cuyos pecados no han sido perdonados, sobre quien permanece siempre la ira de Dios? ¿Puede un hombre deleitarse en un león rugiente, o en una osa despojada de sus cachorros? ¿Puede un hombre deleitarse en un fuego consumidor? ¿Puede un hombre deleitarse en una espada desnuda que busca alcanzar su mismo corazón? Sin embargo, Dios es así para ti mientras estés fuera de la gracia. ¿Cómo, entonces, puedes deleitarte en Dios? Hay un paso necesario: cree en el Señor Jesucristo, y entonces te deleitarás en el Señor. Es decir, confía en ti mismo para ser salvo por Cristo. Ve y ponte en manos de Cristo para que todos tus pecados sean borrados, y cuando hayas confiado en Cristo sabrás que tu pecado es perdonado, que estás reconciliado con Dios por la muerte de su Hijo, y podrás seguir tu camino y deleitarte en Dios, porque esta es la promesa: tu deseo te será concedido.`;
 
+const TESORO = `Tesoro de David Por
+Charles H. Spurgeon
+
+Salmo 37
+
+TÍTULO. Tesoros De David. Solo esta palabra indica la autoría; no se especifica si se trata de un canto o una meditación. Fue escrito por David en su vejez (Salmo 37:25), y su valor reside aún mayor por ser el testimonio de una experiencia tan diversa.
+ASUNTO. El gran enigma de la prosperidad de los impíos y la aflicción de los justos, que ha desconcertado a tantos, se aborda aquí a la luz del futuro; y la inquietud y la queja quedan severamente prohibidas. Es un salmo en el que el Señor apacigua con dulzura las quejas, demasiado comunes, de su pueblo, y calma sus mentes respecto a su trato actual con su rebaño escogido y los lobos que los rodean. Contiene ocho grandes preceptos, se ilustra dos veces con relatos autobiográficos y abunda en contrastes notables.
+
+DIVISIÓN. El Salmo difícilmente puede dividirse en secciones considerables. Se asemeja a un capítulo del libro de Proverbios, ya que la mayoría de los versículos son completos en sí mismos. Es un Salmo alfabético: en un orden algo irregular, las primeras letras de los versículos siguen el alfabeto hebreo. Esto pudo haber sido no solo una invención poética, sino también una ayuda para la memoria. Se ruega al lector que lea el Salmo completo sin comentarios antes de pasar a nuestra exposición.
+
+EXPOSICIÓN
+Versículo 1. El Salmo comienza con el primer precepto. ¡Ay!, es demasiado común que los creyentes, en sus horas de adversidad, se sientan tratados con dureza cuando ven a personas completamente desprovistas de religión y honestidad, regocijándose en abundante prosperidad. Muy necesario es el mandato: No te inquietes por los malhechores. Inquietarse es preocuparse, tener acidez, enfurecerse, enojarse. La naturaleza es muy propensa a encender un fuego de celos cuando ve a transgresores de la ley cabalgando y a súbditos obedientes caminando en el lodo: es una lección que solo se aprende en la escuela de la gracia, cuando uno llega a contemplar las providencias más paradójicas con la devota complacencia de quien está seguro de que el Señor es justo en todos sus actos. Parece difícil para los juicios carnales que la mejor carne vaya a parar a los perros, mientras los niños amados languidecen por falta de ella. Ni tengas envidia de los que hacen iniquidad. El mismo consejo bajo otra forma. Cuando uno es pobre, despreciado y atraviesa una profunda prueba, nuestro viejo Adán, naturalmente, siente envidia de los ricos y poderosos; y cuando somos conscientes de haber sido más justos que ellos, el diablo seguramente estará presente con argumentos blasfemos. La adversidad puede corromper incluso a la flor y nata de la humanidad. A los hombres malvados, en lugar de envidiarlos, debemos mirarlos con horror y aversión; sin embargo, sus mesas repletas y sus lujos ostentosos son demasiado propensos a fascinar nuestros pobres ojos entreabiertos. ¿Quién envidia al toro gordo las cintas y guirnaldas que lo adornan mientras lo llevan al matadero? Sin embargo, el caso es similar; pues los ricos impíos no son más que bestias engordadas para el sacrificio.
+
+Versículo 2. Porque pronto serán cortados como la hierba. La guadaña de la muerte se afila. Verde crece la hierba, pero rápido viene la guadaña. La destrucción de los impíos será rápida, repentina, segura, abrumadora, irrecuperable. La hierba no puede resistir ni escapar del segador. Y se marchitará como la hierba verde. La belleza de la hierba se seca al instante con el calor del sol, y así toda la gloria de los impíos desaparecerá a la hora de la muerte. La muerte mata al impío como a la hierba, y la ira lo marchita como al heno; muere, y su nombre se pudre. ¡Qué final tan completo se le da al hombre cuyas jactancias no tenían fin! ¿Vale la pena desperdiciarnos preocupándonos por el insecto de una hora, un efímero que en el mismo día nace y muere? Dentro de los creyentes hay una semilla viva e incorruptible que vive y permanece para siempre; ¿Por qué habrían de envidiar la mera carne y su gloria, que no son sino como la hierba y su flor?
+
+Versículo 3. Confía en el Señor. Este es el segundo precepto, apropiado para la ocasión. La fe cura la inquietud. La vista es bizca y solo ve las cosas como parecen, de ahí su envidia; la fe tiene una visión más clara para contemplar las cosas como realmente son, de ahí su paz. Y haz el bien. La verdadera fe es activamente obediente. Hacer el bien es un excelente remedio para la inquietud. Hay un gozo en la actividad santa que ahuyenta el óxido del descontento. Así habitarás en la tierra. En "la tierra" que mana leche y miel; el Canaán del pacto. No vagarás por el desierto de la murmuración, sino que morarás en la tierra prometida de contentamiento y descanso. "Nosotros, los que hemos creído, entramos en el descanso". Mucho de lo externo depende de lo interno: donde hay cielo en el corazón, habrá cielo en la casa. Y ciertamente serás alimentado, o pastoreado. A la integridad y la fe se les garantizan las necesidades. El buen pastor ejercerá su cuidado pastoral sobre todos los creyentes. En verdad serán alimentados, y alimentados con la verdad. La promesa de Dios será su banquete perpetuo; no les faltará ni lo espiritual ni lo temporal. Algunos interpretan esto como una exhortación: «Aliméntense de la verdad». Ciertamente, esto es un buen consuelo y destierra para siempre la envidia que consume el corazón.
+
+Versículo 4. Hay un ascenso en este tercer precepto. A quien primero se le ordenó no inquietarse, luego se le mandó confiar activamente, y ahora se le dice con santo deseo que se deleite en Dios. Deléitate también en el Señor. Haz de Jehová el gozo y la alegría de tu espíritu. Los hombres malvados se deleitan en objetos carnales; no los envidies si se les permite saciarse con tales ídolos vanos; busca tú tu mejor deleite y llénate por completo con tu porción más sublime. En cierto sentido, imita a los malvados; ellos se deleitan en su porción; procura deleitarte en la tuya, y así, lejos de envidiarlos, los compadecerás. No hay lugar para la inquietud si recordamos que Dios es nuestro, sino que hay todo incentivo para el gozo sagrado del tipo más elevado y extático. Cada nombre, atributo, palabra u obra de Jehová debe deleitarnos, y al meditar en ello, nuestra alma debe regocijarse como el epicúreo que se alimenta con delicadeza y profundo gusto por sus manjares. Y él te concederá los deseos de tu corazón. Un deber placentero se ve recompensado aquí con otro placer. Quienes se deleitan en Dios no desean ni piden nada más que lo que agrada a Dios; por lo tanto, es seguro darles carta blanca. Su voluntad está sometida a la voluntad de Dios, y ahora pueden tener lo que deseen. Aquí se refiere a nuestros deseos más íntimos, no a nuestros anhelos casuales; hay muchas cosas que la naturaleza podría desear que la gracia jamás nos permitiría pedir; estos deseos profundos, de oración y súplica , son aquellos a los que se hace la promesa.
+
+Versículo 5. Encomienda tu camino al Señor. Deposita toda la carga de tu vida en el Señor. Deja en manos de Jehová no solo tu inquietud presente, sino todas tus preocupaciones; de hecho, somete a él todo el rumbo de tu vida. Desecha la ansiedad, renuncia a tu voluntad, somete tu juicio, déjalo todo en manos del Dios de todos. ¡Qué remedio tan eficaz es este para expulsar la envidia! ¡Qué gran logro indica este cuarto precepto! ¡Cuán bienaventurado debe ser aquel que vive cada día en obediencia a él! Confía también en él, y él lo hará realidad. Nuestro destino se cumplirá con gozo si confiamos plenamente en nuestro Señor. Podemos cantar con serenidad:
+
+"Tu camino, no el mío, oh Señor,
+por oscuro que sea;
+guíame con tu diestra,
+escoge para mí el camino."
+
+"Suave o áspero,
+seguirá siendo lo mejor;
+sinuoso o recto, no importa,
+me lleva a tu descanso."
+
+"No me atrevo a elegir mi destino,
+ni lo haría aunque pudiera;
+pero elígeme tú por mí, oh Dios mío,
+y así caminaré por el camino recto."
+
+"Toma mi copa y llénala
+con alegría o tristeza; elige lo bueno y lo malo
+según te parezca mejor ."
+
+El labrador siembra y ara, y luego deja la cosecha en manos de Dios. ¿Qué más puede hacer? No puede cubrir los cielos con nubes, ni ordenar la lluvia, ni hacer brotar el sol, ni crear el rocío. Hace bien en dejarlo todo en manos de Dios; y así, para todos nosotros, la mayor sabiduría, habiendo confiado obedientemente en Dios, es dejar los resultados en sus manos y esperar un fruto bendito.
+
+Versículo 6. Y él hará resplandecer tu justicia como la luz. En materia de reputación personal, podemos contentarnos especialmente con guardar silencio y dejar nuestra vindicación en manos del Juez de toda la tierra. Cuanto más nos preocupemos en este caso, peor para nosotros. Nuestra fortaleza reside en la quietud. El Señor limpiará al calumniado. Si velamos por su honor, él velará por el nuestro. Es maravilloso cómo, cuando la fe aprende a soportar la calumnia con serenidad, la inmundicia no la contamina, sino que se desprende como bolas de nieve de un muro de granito. Incluso en los peores casos, donde un buen nombre se ve oscurecido por un tiempo, la Providencia enviará un claro como la luz del amanecer, que aumentará hasta que el hombre una vez censurado sea universalmente admirado. Y tu juicio como el mediodía. No quedará sombra de reproche. El hombre estará en su máximo esplendor. La oscuridad de su dolor y su mala reputación huirán.
+
+Versículo 7. Descansa en el Señor. Este quinto precepto es divino y requiere mucha gracia para llevarlo a cabo. Aquietar el espíritu, guardar silencio ante el Señor, esperar con santa paciencia el tiempo para resolver las dificultades de la Providencia: eso es a lo que todo corazón piadoso debería aspirar. «Aarón guardó silencio»: «No abrí mi boca, porque tú lo hiciste». Una lengua callada, en muchos casos, no solo muestra sabiduría, sino también un corazón santo. Y espéralo con paciencia. El tiempo no es nada para él; que no sea nada para ti. Vale la pena esperar por Dios. «Nunca llega antes de tiempo, nunca llega demasiado tarde». En una historia, esperamos el final para aclarar la trama; no debemos prejuzgar el gran drama de la vida, sino quedarnos hasta la escena final y ver a qué final llega todo. No te inquietes por el que prospera en su camino, por el hombre que lleva a cabo planes malvados. No hay bien, sino mucho mal, en preocuparse por el éxito actual de los conspiradores sin escrúpulos: no se dejen llevar por juicios prematuros, pues deshonran a Dios y los agotan. Decidan, aunque los malvados triunfen, tratar el asunto con indiferencia y jamás permitir que se cuestione la justicia y la bondad del Señor. ¿Qué importa si los planes malvados triunfan y los suyos fracasan? Hay más amor de Dios en sus derrotas que en los éxitos de los malvados.
+
+Versículo 8. Deja de enojarte y abandona la ira. Especialmente la ira contra los designios de la Providencia y los celos por los placeres pasajeros de aquellos que pronto serán desterrados de todo consuelo. La ira en cualquier lugar es locura, aquí agrava la demencia. Sin embargo, puesto que la ira intentará acompañarnos, debemos abandonarla resueltamente. No te inquietes de ninguna manera para hacer el mal. Bajo ninguna circunstancia ni por ningún motivo te dejes llevar por tal camino. La irritabilidad está al borde del gran pecado. Muchos que se han dejado llevar por la murmuración han llegado a pecar para obtener sus supuestos derechos. Cuidado con criticar a los demás, esfuérzate por ser hallado en el camino correcto; y así como temerías el pecado externo, tiembla ante la queja interna.
+
+Versículo 9. Porque los malhechores serán exterminados. Su muerte será un castigo ejemplar; no un traslado a un estado mejor, sino una ejecución en la que se aplicará la justicia. Pero aquellos que esperan en el Señor —aquellos que con fe paciente esperan su porción en la otra vida— heredarán la tierra. Incluso en esta vida disfrutan plenamente, y en los siglos venideros serán suyos la gloria y el triunfo. La pasión, según la parábola de Bunyan, obtiene sus bienes primero, y estos se acaban pronto; la paciencia obtiene sus bienes al final, y estos duran para siempre.
+
+Versículo 10. Porque dentro de poco, el impío ya no existirá. Cuando los malvados alcanzan la grandeza, los juicios de Dios a menudo los arrasan; sus riquezas se derriten, su poder se desvanece, su felicidad se convierte en miseria; ellos mismos dejan de ser contados entre los vivos. La brevedad de la vida nos hace ver que el brillo de los grandes impíos no es oro verdadero. Oh, por qué, creyente probado, ¿envidias a aquel que dentro de poco yacerá más bajo que el polvo? Sí, debes considerar diligentemente su lugar, y no existirá. Su casa estará vacía, su cargo vacante, su propiedad sin dueño; será completamente borrado, tal vez aniquilado por su propia depravación, o llevado a un lecho de muerte de penuria por su propia extravagancia. Desaparecido como una nube pasajera, olvidado como un sueño, ¿dónde están sus jactancias y prepotencias, y dónde la pompa que hacía que los pobres mortales pensaran que el pecador era bienaventurado?
+
+Versículo 11. Pero los mansos heredarán la tierra. Por encima de todos los demás, disfrutarán de la vida. Aunque sufran, sus consuelos superarán sus tribulaciones. Heredar la tierra significa obtener los privilegios del pacto y la salvación de Dios. Quienes sean verdaderamente humildes tomarán su lugar con el resto de los herederos de la gracia, a quienes les corresponde todo bien por derecho de nacimiento. Y se deleitarán en la abundancia de paz. La paz aman y la paz tendrán. Si no encuentran abundancia de oro, la abundancia de paz les será mucho más útil. Otros encuentran alegría en la discordia, y de ahí surge su miseria a su debido tiempo; pero la paz conduce a la paz, y cuanto más la ame un hombre, más le llegará. En el período de paz de los últimos días, cuando la paz universal alegre la tierra, el significado profético completo de palabras como estas se hará evidente.
+
+Versículos 12-15. He aquí el retrato de un opresor orgulloso, armado hasta los dientes.
+
+Versículo 12. El impío trama contra el justo. ¿Por qué no puede dejar en paz al hombre bueno? Porque hay enemistad entre la descendencia de la serpiente y la descendencia de la mujer. ¿Por qué no atacarlo con justicia? ¿Por qué conspirar y maquinar? Porque es propio de la naturaleza de la serpiente ser muy astuta. La navegación tranquila no les conviene a quienes están a bordo del "Apolión". Y rechinaba los dientes contra él. Los impíos muestran con sus gestos lo que harían si pudieran; si no pueden roer, rechinarán los dientes; si no pueden morder, al menos ladrarán. Esto es precisamente lo que el mundo sin gracia hizo con "aquel justo", el Príncipe de Paz. Sin embargo, él no se vengó de ellos, sino que, como un cordero silencioso, recibió las ofensas con paciencia.
+
+Versículo 13. El Señor se reirá de él. El hombre piadoso no necesita preocuparse, sino dejar que el Señor se encargue de la merecida venganza, pues se burlará por completo de la malicia de los enemigos del hombre bueno. Que el orgulloso burlón rechinara los dientes y echara espuma por la boca; tendrá que enfrentarse a alguien que lo mirará con sereno desdén, a él y a sus delirios. Porque ve que su día se acerca. El hombre malvado no ve cuán cerca está su destrucción; se jacta de aplastar a otros cuando el pie de la justicia ya se alza para pisotearlo como el fango de las calles. ¡Pecadores, en manos de un Dios airado, y aun así conspirando contra sus hijos! ¡Pobres almas, que corren así hacia la punta de la lanza de Jehová!
+
+Versículo 14. Los malvados han desenvainado la espada. Extienden su arma fuera de la vaina y esperan el momento oportuno para usarla. Y han tensado su arco. Un arma no les basta, llevan otra lista para la acción. Llevan un arco tan fuerte que lo han pisoteado para tensarlo; no perderán nada por falta de fuerza o preparación. Para derribar a los pobres y necesitados. Estos son su presa, los objetos de su maldita malicia. Estos cobardes no atacan a sus iguales, sino que buscan a aquellos excelentes que, por la gentileza de sus espíritus y la pobreza de sus bienes, no pueden defenderse. Observen cómo nuestro manso y humilde Señor fue asediado por crueles enemigos, armados con toda clase de armas para matarlo. Y para matar a aquellos de conducta recta. Nada menos que el derrocamiento y la muerte de los justos contentará a los malvados. Los sinceros y honestos son odiados por los astutos intrigantes que se deleitan en la injusticia. Contemplad, pues, a los enemigos de los piadosos, doblemente armados, y aprended cuán ciertas eran las palabras de nuestro Señor: «Si fuerais del mundo, el mundo amaría lo suyo; pero como no sois de este mundo, sino que yo os he escogido de entre el mundo, por eso el mundo os odia».
+
+Versículo 15. Su espada entrará en su propio corazón. Como Amán, serán colgados en la horca que ellos mismos construyeron para Mardoqueo. Cientos de veces ha sucedido esto. Saúl, que intentó matar a David, cayó sobre su propia espada; y el arco, su arma predilecta, cuyo uso enseñó a los hijos de Israel, no pudo salvarlo en Gilboa. Y sus arcos se romperán. Sus invenciones malvadas quedarán inservibles. La malicia se engaña a sí misma. Bebe la copa envenenada que preparó para otro, y se quema en el fuego que encendió para su prójimo. ¿Por qué debemos preocuparnos por la prosperidad de los impíos cuando se arruinan con tanta diligencia mientras creen que perjudican a los santos? Los siguientes nueve versículos describen principalmente el carácter y la bienaventuranza de los piadosos, y la luz se revela con algunos toques oscuros que describen a los impíos y su condena.
+
+Versículo 16. Lo poco que tiene un hombre justo es mejor que las riquezas de muchos impíos. Este es un buen proverbio. Lo poco de un hombre bueno se contrasta con las riquezas de muchos impíos, y así la expresión se vuelve más contundente. Hay más felicidad en la cena piadosa de hierbas que en el buey estancado de los alborotadores profanos. En el original hay una alusión al ruido de una multitud, como para insinuar el tumulto y el bullicio de la riqueza desenfrenada, y para contrastarlo con la tranquilidad de la porción más humilde de los piadosos. Preferiríamos pasar hambre con Juan que festejar con Herodes; mejor alimentarnos con escasos alimentos con los profetas en la cueva de Abdías que alocarnos con los sacerdotes de Baal. La felicidad de un hombre no consiste en los montones de oro que tiene almacenados. El contentamiento encuentra multum en parvo, mientras que para un corazón perverso el mundo entero es demasiado poco.
+
+Versículo 17. Porque los brazos de los impíos serán quebrados. Su poder para hacer el mal será efectivamente anulado, pues los brazos que alzaron contra Dios serán aplastados hasta el hueso. Dios a menudo hace que los hombres implacables sean incapaces. ¡Qué espectáculo más despreciable que la malicia desdentada, la malevolencia sin armas! Pero el Señor sostiene a los justos. Su causa y su camino estarán seguros, pues están bien protegidos. La espada de dos filos hiere a los impíos y defiende a los justos.
+
+Versículo 18. El Señor conoce los días de los justos. Su presciencia lo hizo reír de los orgullosos, pero en el caso de los justos ve un futuro más brillante y los trata como herederos de la salvación. Este es siempre nuestro consuelo: que Dios conoce todos los acontecimientos y que nada en nuestro futuro puede tomarlo por sorpresa. Ninguna flecha puede herirnos por accidente, ningún peligro puede atacarnos sigilosamente; ni en el tiempo ni en la eternidad puede ocurrirnos ningún mal imprevisto. El futuro será solo un desarrollo continuo de las cosas buenas que el Señor ha reservado para nosotros. Y su herencia será para siempre. Su herencia no se desvanece. Está garantizada, de modo que nadie puede privarlos de ella, y preservada, de modo que nadie la destruirá. La eternidad es el atributo peculiar de la porción del creyente: lo que tienen en la tierra está bastante seguro, pero lo que tendrán en el cielo es suyo sin fin.
+
+Versículo 19. No se avergonzarán en tiempos difíciles. Vendrán calamidades, pero también liberaciones. Como los justos nunca contaron con inmunidad ante las dificultades, no se decepcionarán cuando les toque afrontarlas, sino que se encomendarán de nuevo a su Dios y demostrarán una vez más su fidelidad y amor. Dios no es amigo solo en los buenos tiempos, sino un amigo de verdad y un amigo en la necesidad. Y en los días de hambre serán saciados. Su tinaja de harina y su vasija de aceite les durarán el día de la angustia, y si los cuervos no les traen pan y carne, su sustento llegará de otra manera, pues su pan les será dado. Nuestro Señor se apoyó en esto cuando tuvo hambre en el desierto, y por la fe rechazó al tentador; nosotros también podemos ser capacitados para no inquietarnos de ninguna manera para hacer el mal por la misma consideración. Si la providencia de Dios es nuestra herencia, no necesitamos preocuparnos por el precio del trigo. El moho, el tizón y la podredumbre están en manos del Señor. La incredulidad no puede salvar ni una sola espiga de ser quemada, pero la fe, si bien no puede preservar la cosecha, puede hacer algo mejor: preservar nuestra alegría en el Señor.
+
+Versículo 20. Pero los impíos perecerán. Cualquiera que sea la luz fantasmal que pueda burlarse de su presente, su futuro es negro con una noche oscura y densa. Se ha dictado sentencia contra ellos, están reservados para la ejecución. Que hagan alarde de su escarlata y lino fino, y que se den banquetes suntuosos cada día; la espada de Damocles está sobre sus cabezas, y si su ingenio estuviera un poco más despierto, su alegría se convertiría en miseria. Los enemigos del Señor serán como la grasa de los corderos. Así como la grasa del sacrificio se consumió por completo en el altar, así los impíos desaparecerán por completo del lugar de su honor y orgullo. ¿Cómo puede ser de otra manera? Si la paja se atreve a competir con la llama, ¿qué fin puede esperar? Se consumirán. Como leña seca, como montones de hojas, como brasas ardientes, pronto desaparecerán, y desaparecerán por completo, porque se consumirán en humo. Sic transit gloria mundi. Una bocanada es el fin de toda su fanfarronería. Su furia se desvanece en humo. Se engordaron y perecieron en su propia grasa. Intentaron ser consumidores del bien, y serán consumidos.
+
+Versículo 21. El impío pide prestado y no paga. En parte porque no quiere, pero principalmente porque no puede. La necesidad sigue al derroche, y la deuda queda impaga. A menudo, los impíos se empobrecen así en esta vida. Su extravagancia desenfrenada los lleva a la puerta del usurero y al pleito del deudor. Pero el justo muestra misericordia y da; la misericordia le ha sido concedida, y por lo tanto da con misericordia. Es generoso y próspero. No es un deudor, sino un dador. En la medida en que el hombre bueno puede hacerlo, escucha las peticiones de necesidad, y en lugar de empobrecerse por lo que da, se enriquece y puede hacer más. No da para fomentar la ociosidad, sino por verdadera misericordia, que presupone una necesidad real. El texto nos sugiere que, en general, es mucho mejor dar que prestar. Por lo general, prestar termina por dar, y conviene anticiparse a ello y, con un poco de generosidad, evitar lo inevitable. Si estas dos frases describen a los malvados y a los justos, el autor de estas líneas tiene motivos para saber que en Londres y sus alrededores los malvados son muy numerosos.
+
+Versículo 22. Porque los que son bendecidos por él heredarán la tierra. La bendición de Dios es, después de todo, verdadera riqueza. La verdadera felicidad, la que el pacto asegura a todos los elegidos del cielo, reside en el favor divino. Y los que son maldecidos por él serán exterminados. Su ceño fruncido es muerte; más aún, es el infierno.
+
+Versículo 23. Los pasos del hombre bueno son guiados por el Señor. Toda su vida está ordenada con gracia, y en amorosa bondad todo es fijado, establecido y sostenido. Ningún destino imprudente ni azar voluble nos gobierna; cada uno de nuestros pasos está sujeto al decreto divino. Él se deleita en su camino. Así como los padres se complacen con los primeros pasos vacilantes de sus bebés, todo lo que concierne a un santo interesa a su Padre celestial. Dios ama contemplar los santos esfuerzos de un alma que se eleva hacia el cielo. En las pruebas y las alegrías de los fieles, Jesús tiene comunión con ellos y se deleita en ser su compañero compasivo.
+
+Versículo 24. Aunque caiga. Los desastres y los reveses pueden derribarlo; puede, como Job, ser despojado de todo; como José, ser encarcelado; como Jonás, ser arrojado al abismo. No será completamente derribado. No estará totalmente postrado. Será puesto de rodillas, pero no sobre su rostro; o, si queda tendido por un momento, se levantará de nuevo en poco tiempo. Ningún santo caerá de forma definitiva o fatal. El dolor puede llevarnos a la tierra, y la muerte puede llevarnos a la tumba, pero no podemos caer más bajo, y de lo más bajo de todo nos elevaremos a lo más alto de todo. Porque el Señor lo sostiene con su mano. Con condescendencia, con su propia mano, Dios sostiene a sus santos; no los deja a mera voluntad delegada, sino que les brinda asistencia personal. Incluso en nuestras caídas, el Señor nos da una medida de sostén. Donde la gracia no impide caer, nos libra de mantenernos caídos. Job finalmente tuvo el doble de riqueza, José reinó sobre Egipto y Jonás llegó a salvo a su destino. No es que los santos sean fuertes, sabios o meritorios, por lo que se levantan después de cada caída, sino porque Dios es su ayudador y, por lo tanto, nadie puede vencerlos.
+
+Versículo 25. Esta fue la observación de David: « He sido joven, y ahora soy viejo; sin embargo, no he visto al justo desamparado, ni a su descendencia mendigando pan». No es una observación que yo mismo haya hecho, pues he ayudado a los hijos de hombres indudablemente buenos, que me han pedido limosna como mendigos comunes. Pero esto no pone en duda la observación de David. Él vivía bajo una doctrina más externa y más mundana que la actual regla de la fe personal. Jamás se desampara al justo; esa es una regla sin excepción. Rara vez, en efecto, su descendencia mendiga pan; y aunque ocurre ocasionalmente, por disipación, ociosidad u otras causas por parte de sus hijos, sin duda es algo tan raro que hay muchos vivos que nunca lo han visto. Vayan a la iglesia y vean cuán pocos son los hijos de padres piadosos; entren a la cárcel y vean cuán aún más raro es el caso. Los hijos de pastores pobres a menudo se enriquecen. No soy viejo, pero he visto a familias de pobres piadosos enriquecerse y he visto al Señor recompensar la fidelidad del padre con el éxito del hijo, por lo que a menudo he pensado que la mejor manera de dotar de riqueza a la descendencia es empobrecerse por amor a Cristo. En la misión india de la Sociedad Misionera Bautista, esto se ilustra abundantemente.
+
+Versículo 26. Él es siempre misericordioso y presta. Los justos están constantemente bajo impulsos generosos; no prosperan por la tacañería, sino por la generosidad. Como el generoso dador de todo bien, de quien son hijos amados, se deleitan en hacer el bien. Cómo los tacaños y codiciosos pueden esperar la salvación es una maravilla para quienes leen versículos como este en la Biblia. Y su descendencia es bendita. Dios recompensa con creces en la siguiente generación. Si los hijos de los justos no son piadosos, debe haber alguna razón para ello en la negligencia de los padres o alguna otra causa culpable. El amigo del padre es el amigo de la familia. El Dios de Abraham es el Dios de Isaac y de Jacob.
+
+Versículos 27-29. Aquí tenemos el séptimo precepto, que toma una forma negativa y positiva, y es la quintaesencia de todo el Salmo.
+
+Versículo 27. Apártate del mal y haz el bien. No debemos envidiar a los malhechores, sino apartarnos por completo de su espíritu y ejemplo. Así como Lot abandonó Sodoma sin mirar atrás, así debemos abandonar el pecado. No hay tregua ni tregua con el pecado; debemos apartarnos de él sin vacilar y ponernos a trabajar en la dirección opuesta. Quien descuida hacer el bien pronto caerá en el mal y morará en él para siempre. Obtendrás una herencia duradera y tranquila. Las ganancias y los placeres del mal son efímeros, pero las recompensas de la gracia son eternas.
+
+Versículo 28. Porque el Señor ama la justicia. Otorgar honor a quien honor se debe es el deleite de Dios, especialmente cuando el hombre justo ha sido calumniado por sus semejantes. Debe ser un placer divino corregir las injusticias y frustrar las maquinaciones de los injustos. El gran Árbitro de los destinos humanos seguramente impartirá justicia tanto a ricos como a pobres, a buenos y malos, porque tal juicio es su deleite. Y no abandona a sus santos. Esto no sería correcto y, por lo tanto, jamás se hará. Dios es tan fiel a los objetos de su amor como justo con toda la humanidad. Ellos son preservados para siempre. Mediante los compromisos del pacto se asegura su seguridad, y mediante el cumplimiento de las garantías se logra esa seguridad; pase lo que pase, los santos son preservados en Cristo Jesús, y porque él vive, ellos también vivirán. Un rey no perderá sus joyas, ni Jehová perderá a su pueblo. Así como el maná en la olla de oro, que de otro modo se habría derretido, se conservó en el arca del pacto bajo el propiciatorio, así los fieles serán preservados en el pacto por el poder de Jesús, su propiciación. Pero la descendencia de los impíos será exterminada. Como la casa de Jeroboam y Acab, de la cual no quedó ni un perro. El honor y la riqueza mal habida rara vez llegan a la tercera generación; la maldición madura antes de que pasen muchos años y cae sobre la casa malvada. Entre los legados de los impíos, el más seguro es el juicio sobre su familia.
+
+Versículo 29. Los justos heredarán la tierra. Como herederos con Jesucristo, la Canaán celestial, que es el antitipo de «la tierra», será suya con toda la bendición del pacto. Y morarán en ella para siempre. Las posesiones varían, pero ninguna se compara con la posesión que los creyentes tienen del cielo. El paraíso les pertenece para siempre por herencia, y vivirán eternamente para disfrutarlo. ¿Quién no sería santo en tales condiciones? ¿Quién se preocuparía por los tesoros efímeros de los impíos?
+
+Versículo 30. La boca del justo habla sabiduría. Dado que todo el Salmo está dedicado a describir los diferentes destinos de los justos y los impíos, era apropiado ofrecer una prueba para conocerlos. La lengua de un hombre no es un mal indicador de su carácter. La boca delata el corazón. Los hombres buenos, por regla general, hablan lo que es edificante, un lenguaje sano, una conversación religiosa, coherente con la iluminación divina que han recibido. La justicia es sabiduría en acción; por lo tanto, todos los hombres buenos son prácticamente sabios, y bien puede ser sabia su palabra. Su lengua habla de juicio. Aboga por la justicia, da un veredicto honesto sobre las cosas y los hombres, y predice que los juicios de Dios caerán sobre los impíos, como en los días pasados. Su conversación no es ni necia ni obscena, ni insustancial ni profana. Nuestra conversación tiene mucha más importancia de la que algunos imaginan.
+
+Versículo 31. La ley de su Dios está en su corazón; ninguno de sus pasos resbalará. Lo mejor en el mejor lugar, produciendo los mejores resultados. Bien podía ser admirable la palabra de aquel hombre cuando su corazón estaba tan lleno de rectitud. Amar la santidad, tener los motivos y deseos santificados, ser obediente al Señor en lo más profundo de nuestro ser: este es el método más seguro para que toda nuestra vida sea eficiente para sus grandes propósitos, e incluso para asegurar los detalles, evitando cualquier error grave. Mantener la constancia en el propio camino, en tiempos como estos, solo se concede a aquellos cuyos corazones son íntegros con Dios, quienes pueden, como en el texto, llamar a Dios su Dios. La política se resbala y tropieza, se desvía y cambia de rumbo, y al final sale perdiendo, pero la sinceridad persevera en su camino recto y alcanza la meta.
+
+Versículo 32. El impío acecha al justo y busca matarlo. Si no fuera por las leyes del país, pronto veríamos una masacre de justos. Jesús era acechado por sus enemigos, sedientos de su sangre; sus discípulos no debían buscar favor donde su Maestro encontró odio y muerte.
+
+Versículo 33. El Señor no lo dejará en sus manos. Dios a menudo se manifiesta para liberar a sus siervos, y cuando no lo hace en esta vida respecto a sus cuerpos, les da a sus almas tal gozo y paz que se elevan triunfantes más allá del poder de sus verdugos. Podemos estar en manos del enemigo por un tiempo, como Job, pero no podemos ser abandonados allí. Ni condenarlo cuando sea juzgado. El tiempo revertirá el veredicto de la prisa, o bien la eternidad eliminará la condenación del tiempo. A su debido tiempo, los justos serán justificados. Las injusticias temporales se toleran, en el orden de la Providencia, para propósitos muy sabios; pero lo amargo no siempre será llamado dulce, ni la luz será para siempre calumniada como oscuridad; lo correcto aparecerá a su debido tiempo; lo ficticio y lo pretencioso serán desenmascarados, y lo real y verdadero será revelado. Si hemos obrado con fidelidad, podemos apelar desde las pequeñas sesiones de la sociedad hasta el solemne juicio del gran día.
+
+Versículo 34. Espera en el Señor. Aquí tenemos el octavo precepto, y es una eminencia elevada a la que aspirar. Espera el tiempo del Señor. Espera en obediencia como un siervo, en esperanza como un heredero, en expectativa como un creyente. Esta pequeña palabra, "espera", es fácil de decir, pero difícil de llevar a cabo, sin embargo, la fe debe hacerlo. Y sigue su camino. Continúa por el camino angosto; que ninguna prisa por riquezas o comodidad cause acciones impías. Que tu lema sea: "Sigue, sigue, sigue". Nunca desfallezcas, ni sueñes con desviarte. "El que persevere hasta el fin, ese será salvo". Y él te exaltará para heredar la tierra. Tendrás todo el bien terrenal que es verdaderamente bueno, y del bien celestial no habrá escasez. La exaltación será la suerte de los excelentes. Cuando los impíos sean exterminados, lo verás. ¡ Qué visión tan terrible y tan instructiva! ¡Qué reprensión para la irritabilidad! ¡Qué incentivo para la gratitud! Alma mía, quédate quieta, mientras prevés el final, el terrible final de los enemigos del Señor.
+
+Versículo 35. Por segunda vez, David recurre a su diario y, esta vez, con imágenes poéticas, nos cuenta lo que había observado. Sería bueno que nosotros también tomáramos nota de las providencias divinas. He visto al impío en gran poder. El hombre era terrible para los demás, gobernaba con mucha autoridad y manejaba las cosas con mano dura, un César en poder, un Creso en riqueza. Y se extendía como un laurel verde. Añadiendo casa a casa y campo a campo, elevándose cada vez más en el estado. Parecía siempre verde como un laurel, crecía como un árbol en su propia tierra natal, de la que nunca había sido trasplantado. No se refiere aquí a ningún árbol en particular, un haya extendida o un roble ancho y frondoso pueden servirnos para comprender la imagen; es algo de la tierra, cuyas raíces están en el barro; sus honores son hojas que se marchitan; y aunque su sombra empequeñece a las plantas que están condenadas a languidecer bajo ella, sin embargo, es en sí mismo algo moribundo, como lo demostrará el hacha del leñador. En el noble árbol, que se proclama rey del bosque, contempla hoy la grandeza de lo impío; espera un momento y maravíllate ante el cambio, mientras la madera es llevada y la raíz misma arrancada de la tierra.
+
+Versículo 36. Sin embargo, falleció. El árbol y el hombre se fueron, el hijo del hombre tan seguro como el hijo del bosque. ¡Qué barrido hace la muerte! Y he aquí que no estaba. Para sorpresa de todos, el gran hombre se había ido, sus propiedades vendidas, su negocio en quiebra, su casa enajenada, su nombre olvidado, y todo en unos pocos meses. Sí, lo busqué, pero no pude encontrarlo. Movidos por la curiosidad, si preguntamos por los impíos, no han dejado rastro; como aves de mal agüero, nadie desea recordarlos. Algunos de los más humildes de los piadosos son inmortalizados, sus nombres son imperecederamente fragantes en la iglesia, mientras que de los más capaces de infieles y blasfemos apenas se recuerdan sus nombres más allá de unos pocos años. Los hombres que estaban en boca de todos ayer son olvidados mañana, pues solo la virtud es inmortal.
+
+Versículo 37. Fíjense en el hombre perfecto y contemplen al justo. Después de haber visto con asombro la caída de los impíos, presten atención al hombre sinceramente piadoso y observen el bendito contraste. Los hombres buenos son dignos de admiración y merecen nuestro estudio. Los hombres justos son maravillas de gracia y merecen ser contemplados. Porque el fin de ese hombre es la paz. El hombre de paz tiene un fin de paz. La paz sin fin llega al final para el hombre de Dios. Su camino puede ser arduo, pero conduce a casa. Con los creyentes puede llover por la mañana, truenar al mediodía y diluviar por la tarde, pero debe despejarse antes de que se ponga el sol. La guerra puede durar hasta nuestra última hora, pero entonces oiremos lo último de ella.
+
+Versículo 38. Pero los transgresores serán destruidos juntos. Una ruina común aguarda a los que se unen en una misma rebelión. El fin de los impíos será truncado. Su tiempo será acortado, su felicidad se acabará, sus esperanzas se desvanecerán para siempre, su ejecución se apresurará. Su presente se acorta por sus pecados; no vivirán ni la mitad de sus días. No tienen futuro que valga la pena, mientras que los justos consideran su futuro como su verdadera herencia.
+
+Versículo 39. Pero la salvación de los justos es del Señor. Esta es una sana doctrina. La esencia misma del evangelio de la gracia gratuita. Por salvación se entiende liberación de todo tipo; no solo la salvación que finalmente nos lleva a la gloria, sino también todos los rescates menores del camino; todos estos se deben atribuir al Señor, y solo a él. Que la gloria sea para él por medio de aquellos a quienes concede la salvación. Él es su fortaleza en tiempos de tribulación. Mientras que la tribulación derriba a los impíos, solo impulsa a los justos hacia su poderoso Ayudador, quien se regocija al sostenerlos.
+
+Versículo 40. Y el Señor los ayudará. En todo tiempo futuro, Jehová defenderá a sus escogidos. Nuestro Gran Aliado desplegará sus fuerzas en el fragor de la batalla. Los librará de los impíos. Así como rescató a Daniel de los leones, así preservará a sus amados de sus enemigos; por lo tanto, no deben preocuparse ni desanimarse. Y los salvará, porque confían en él. La fe les asegurará la seguridad de los elegidos. Es la marca de las ovejas por la cual serán separadas de las cabras. No su mérito, sino su fe, los distinguirá. ¿Quién no querría probar el camino de la fe? Quien verdaderamente cree en Dios ya no se inquietará por las aparentes irregularidades de esta vida presente, sino que descansará seguro de que lo misterioso es, sin embargo, justo, y lo que parece difícil, sin duda, está ordenado por la misericordia. Así termina el Salmo con una nota que es el toque de difuntos de la impía inquietud con la que comenzó el Salmo. Dichosos aquellos que pueden así cantar para salir de malas condiciones y alcanzar condiciones de gracia.`;
+
 /* Textos que vienen con el lector; a estos se suman los que abras tú. */
 const BIBLIOTECA = [
   { id:"guia",      nombre:"Cómo usar este lector",                        texto:DEMO },
   { id:"spurgeon",  nombre:"Lo mejor en el mejor lugar · C. H. Spurgeon",  texto:SERMON },
-  { id:"luz",       nombre:"Luz del sol en el corazón · C. H. Spurgeon",   texto:LUZ }
+  { id:"luz",       nombre:"Luz del sol en el corazón · C. H. Spurgeon",   texto:LUZ },
+  { id:"tesoro",    nombre:"Tesoro de David · Salmo 37 · C. H. Spurgeon",  texto:TESORO }
 ];
 
 const S = { chunks:[], i:0, playing:false, paused:false, gen:0, words:0 };
@@ -577,6 +667,7 @@ function frases(p){
 const article = $("#article");
 function render(raw){
   stop();
+  S.i = 0;                       /* cada texto empieza por su primera frase */
   const limpio = String(raw).replace(/\r\n?/g, "\n").replace(/ /g, " ").trim();
   let parrafos = limpio.split(/\n{2,}/).map(t => t.trim()).filter(Boolean);
   if(parrafos.length < 2) parrafos = limpio.split(/\n/).map(t => t.trim()).filter(Boolean);
@@ -608,109 +699,25 @@ function stats(){
     " frases · ≈ " + min + " min en voz a " + Number($("#rate").value).toFixed(1) + "×";
 }
 
-/* ── Biblioteca: los incluidos más los tuyos ─────────────────── */
-const lista = $("#lista"), quitarBtn = $("#quitarBtn");
-let propios = [];
-function leerPropios(){
-  try{ propios = JSON.parse(store.get("propios", "[]")) || []; }catch(e){ propios = []; }
-  const viejo = store.get("txt", "");                  /* texto de versiones anteriores */
-  if(viejo){
-    propios.unshift({ id:"u"+Date.now(), nombre:store.get("nom","Tu texto"), texto:viejo });
-    store.set("txt", ""); store.set("nom", "");
-    guardarPropios();
-  }
-}
-function guardarPropios(){
-  try{ store.set("propios", JSON.stringify(propios)); }
-  catch(e){ aviso("No se pudo guardar el texto en este navegador: no hay espacio. Se lee igual mientras no cierres la página."); }
-}
-function porId(id){
-  return propios.find(t => t.id === id) || BIBLIOTECA.find(t => t.id === id);
-}
+/* ── Biblioteca de textos ────────────────────────────────────── */
+const lista = $("#lista");
 function pintarLista(sel){
   lista.textContent = "";
-  if(propios.length){
-    const g = document.createElement("optgroup");
-    g.label = "Tus textos";
-    propios.forEach(t => {
-      const o = document.createElement("option");
-      o.value = t.id; o.textContent = t.nombre;
-      g.appendChild(o);
-    });
-    lista.appendChild(g);
-  }
-  const g2 = document.createElement("optgroup");
-  g2.label = "Incluidos";
   BIBLIOTECA.forEach(t => {
     const o = document.createElement("option");
     o.value = t.id; o.textContent = t.nombre;
-    g2.appendChild(o);
+    lista.appendChild(o);
   });
-  lista.appendChild(g2);
   lista.value = sel;
-  quitarBtn.hidden = !propios.some(t => t.id === sel);
 }
 function seleccionar(id, cerrar){
-  const t = porId(id) || BIBLIOTECA[0];
+  const t = BIBLIOTECA.find(x => x.id === id) || BIBLIOTECA[0];
   store.set("sel", t.id);
   pintarLista(t.id);
   render(t.texto);
   if(cerrar) abrirPanel(false);
 }
-function agregar(nombre, texto){
-  const id = "u" + Date.now();
-  propios.unshift({ id:id, nombre:nombre, texto:String(texto).slice(0, 300000) });
-  propios = propios.slice(0, 8);                       /* se guardan los ocho más recientes */
-  guardarPropios();
-  seleccionar(id, true);
-}
 lista.addEventListener("change", () => seleccionar(lista.value, true));
-quitarBtn.addEventListener("click", () => {
-  const id = lista.value;
-  propios = propios.filter(t => t.id !== id);
-  guardarPropios();
-  seleccionar(propios.length ? propios[0].id : BIBLIOTECA[0].id);
-});
-
-/* ── Abrir archivos ──────────────────────────────────────────── */
-function cargarArchivo(f){
-  if(!f) return;
-  const ok = /\.(txt|md|markdown|text|log|csv)$/i.test(f.name) || /^text\//.test(f.type) || f.type === "";
-  if(!ok){ aviso("Ese archivo no es de texto. Usa un archivo <b>.txt</b> (o .md); para un PDF o un Word, guarda antes el contenido como texto plano."); return; }
-  const r = new FileReader();
-  r.onload = () => {
-    aviso("");
-    agregar(f.name.replace(/\.(txt|md|markdown|text|log|csv)$/i, ""), r.result);
-  };
-  r.onerror = () => aviso("No se pudo leer el archivo. Intenta abrirlo de nuevo.");
-  r.readAsText(f, "utf-8");
-}
-$("#openBtn2").addEventListener("click", () => $("#file").click());
-$("#file").addEventListener("change", e => { cargarArchivo(e.target.files[0]); e.target.value = ""; });
-
-const drop = $("#drop");
-let arrastres = 0;
-window.addEventListener("dragenter", e => { e.preventDefault(); if(++arrastres) drop.classList.add("on"); });
-window.addEventListener("dragover", e => e.preventDefault());
-window.addEventListener("dragleave", () => { if(--arrastres <= 0){ arrastres = 0; drop.classList.remove("on"); } });
-window.addEventListener("drop", e => {
-  e.preventDefault(); arrastres = 0; drop.classList.remove("on");
-  if(e.dataTransfer.files && e.dataTransfer.files[0]) cargarArchivo(e.dataTransfer.files[0]);
-});
-
-$("#pegarBtn").addEventListener("click", () => {
-  const caja = $("#pegar");
-  caja.hidden = !caja.hidden;
-  if(!caja.hidden) $("#pegarArea").focus();
-});
-$("#cancelarPegar").addEventListener("click", () => { $("#pegar").hidden = true; });
-$("#usarTexto").addEventListener("click", () => {
-  const t = $("#pegarArea").value.trim();
-  if(!t){ aviso("Escribe o pega algún texto antes de continuar."); return; }
-  const titulo = (t.split("\n")[0] || "Texto pegado").trim().slice(0, 50) || "Texto pegado";
-  $("#pegar").hidden = true; $("#pegarArea").value = ""; aviso("");
-  agregar(titulo, t);
-});
 
 /* ── Voces del sistema ───────────────────────────────────────── */
 const PREF = ["es-MX","es-US","es-419","es-CO","es-AR","es-CL","es-PE","es-VE","es-EC","es-GT","es-CR","es-PA","es-DO","es-BO","es-UY","es-PY","es-HN","es-NI","es-SV","es-PR","es-CU"];
@@ -933,7 +940,6 @@ $("#rate").value = store.get("vel","1");
 $("#vol").value = store.get("vol","1");
 $("#rateVal").textContent = rate().toFixed(1) + "×";
 $("#volVal").textContent = Math.round(volume()*100) + " %";
-leerPropios();
 seleccionar(store.get("sel", "guia"));
 })();
 </script>
