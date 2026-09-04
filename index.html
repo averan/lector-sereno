@@ -1,0 +1,880 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lector Sereno</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Literata:opsz,wght@7..72,400;7..72,500;7..72,600&display=swap">
+
+<style>
+/* ── Tokens: tema Claro (base) ───────────────────────────────── */
+:root{
+  --bg:#EDEAE4; --surface:#FCFBF8; --surface-2:#F4F1EB;
+  --text:#23201C; --dim:#6B655C; --border:#DCD6CC;
+  --accent:#14574E; --accent-ink:#FFFFFF; --accent-soft:#DDEBE7;
+  --mark:#F7DFA6; --mark-text:#2A2318;
+  --shadow:0 1px 2px rgba(35,32,28,.07), 0 -6px 24px rgba(35,32,28,.06);
+  --fs:20px; --lh:1.68;
+}
+/* Papel: sepia cálido */
+:root[data-theme="papel"]{
+  --bg:#E3D7BF; --surface:#F3E9D6; --surface-2:#EADEC6;
+  --text:#37301F; --dim:#7B6C52; --border:#D5C5A5;
+  --accent:#7A4A1E; --accent-ink:#FBF3E4; --accent-soft:#E4D2B2;
+  --mark:#D9B96A; --mark-text:#2E2612;
+  --shadow:0 1px 2px rgba(55,48,31,.08), 0 -6px 24px rgba(55,48,31,.08);
+}
+/* Penumbra: gris suave, poco contraste */
+:root[data-theme="penumbra"]{
+  --bg:#2A2D30; --surface:#33373B; --surface-2:#3B4045;
+  --text:#D5D1C9; --dim:#9B968D; --border:#464B50;
+  --accent:#84C3B7; --accent-ink:#16211F; --accent-soft:#3E4F4C;
+  --mark:#6D5A2C; --mark-text:#F6EEDC;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 -6px 24px rgba(0,0,0,.28);
+}
+/* Nocturno: casi negro */
+:root[data-theme="nocturno"]{
+  --bg:#0E1012; --surface:#15181B; --surface-2:#1D2125;
+  --text:#C7C4BE; --dim:#8A857D; --border:#272B30;
+  --accent:#6FBFB4; --accent-ink:#0C1413; --accent-soft:#1E3330;
+  --mark:#4C3D18; --mark-text:#F1E7CF;
+  --shadow:0 1px 2px rgba(0,0,0,.5), 0 -6px 24px rgba(0,0,0,.45);
+}
+/* Contraste: máxima legibilidad */
+:root[data-theme="contraste"]{
+  --bg:#000000; --surface:#000000; --surface-2:#111111;
+  --text:#FFFFFF; --dim:#DDDDDD; --border:#FFFFFF;
+  --accent:#FFE14D; --accent-ink:#000000; --accent-soft:#3A3200;
+  --mark:#FFE14D; --mark-text:#000000;
+  --shadow:none;
+}
+/* Auto: sigue al sistema solo cuando no hay tema elegido */
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme]){
+    --bg:#0E1012; --surface:#15181B; --surface-2:#1D2125;
+    --text:#C7C4BE; --dim:#8A857D; --border:#272B30;
+    --accent:#6FBFB4; --accent-ink:#0C1413; --accent-soft:#1E3330;
+    --mark:#4C3D18; --mark-text:#F1E7CF;
+    --shadow:0 1px 2px rgba(0,0,0,.5), 0 -6px 24px rgba(0,0,0,.45);
+  }
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:"Archivo","Helvetica Neue",Arial,sans-serif;
+  -webkit-text-size-adjust:100%;
+}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+
+/* ── Barra superior ──────────────────────────────────────────── */
+.bar{
+  position:sticky; top:0; z-index:20;
+  background:var(--surface); border-bottom:1px solid var(--border);
+  display:flex; flex-wrap:wrap; align-items:center; gap:10px 18px;
+  padding:10px 16px;
+}
+.brand{display:flex; align-items:baseline; gap:8px; margin-right:auto}
+.brand b{font-weight:700; font-size:15px; letter-spacing:-.01em}
+.brand .glyph{color:var(--accent); font-size:15px}
+.doc{
+  font-size:12px; color:var(--dim); display:flex; gap:8px; align-items:center;
+  min-width:0; flex-basis:100%; order:3; font-variant-numeric:tabular-nums;
+}
+.doc #docName{
+  color:var(--text); font-weight:500;
+  max-width:min(48ch,100%); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.group{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.lbl{
+  font-size:10px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--dim); white-space:nowrap;
+}
+
+button{font:inherit; color:inherit; cursor:pointer}
+.btn{
+  background:var(--surface-2); border:1px solid var(--border); color:var(--text);
+  border-radius:8px; padding:7px 12px; font-size:13px; font-weight:500;
+  display:inline-flex; align-items:center; gap:7px;
+}
+.btn:hover{border-color:var(--accent); color:var(--accent)}
+.btn.primary{background:var(--accent); border-color:var(--accent); color:var(--accent-ink)}
+.btn.primary:hover{color:var(--accent-ink); filter:brightness(1.08)}
+
+/* Escalón de tamaño */
+.stepper{display:flex; align-items:stretch; border:1px solid var(--border); border-radius:8px; overflow:hidden}
+.stepper button{
+  background:var(--surface-2); border:0; padding:6px 11px; line-height:1;
+  font-size:15px; font-weight:600; color:var(--text);
+}
+.stepper button:hover:not(:disabled){background:var(--accent); color:var(--accent-ink)}
+.stepper button:disabled{opacity:.35; cursor:default}
+.stepper .val{
+  min-width:52px; display:grid; place-items:center; font-size:12px; font-weight:600;
+  background:var(--surface); border-inline:1px solid var(--border);
+  font-variant-numeric:tabular-nums; color:var(--dim);
+}
+
+/* Temas */
+.themes{display:flex; gap:6px; flex-wrap:wrap}
+.chip{
+  background:transparent; border:1px solid var(--border); border-radius:999px;
+  padding:5px 11px 5px 6px; font-size:12px; display:inline-flex; align-items:center; gap:6px;
+}
+.chip .sw{width:14px; height:14px; border-radius:50%; border:1px solid rgba(128,128,128,.45); flex:none}
+.chip[aria-pressed="true"]{border-color:var(--accent); color:var(--accent); font-weight:600; box-shadow:inset 0 0 0 1px var(--accent)}
+
+/* ── Lectura ─────────────────────────────────────────────────── */
+main{padding:34px 18px 210px}
+#article{
+  max-width:34em; margin:0 auto;
+  font-family:"Literata",Georgia,"Times New Roman",serif;
+  font-size:var(--fs); line-height:var(--lh); font-weight:400;
+  text-wrap:pretty;
+}
+#article .h{
+  font-size:1.15em; font-weight:600; margin:0 0 1.1em; letter-spacing:-.01em; text-wrap:balance;
+}
+#article p{margin:0 0 1.05em}
+.sent{border-radius:4px; transition:background .12s ease}
+.sent:hover{background:var(--accent-soft); cursor:pointer}
+.sent.on{
+  background:var(--mark); color:var(--mark-text);
+  box-decoration-break:clone; -webkit-box-decoration-break:clone;
+  padding:.06em .1em; margin:0 -.1em;
+}
+.hint{
+  max-width:34em; margin:26px auto 0; padding-top:16px; border-top:1px solid var(--border);
+  font-size:12px; color:var(--dim); line-height:1.6;
+}
+.hint kbd{
+  font:inherit; font-size:11px; font-weight:600; border:1px solid var(--border);
+  background:var(--surface-2); border-radius:4px; padding:1px 5px;
+}
+
+/* ── Reproductor ─────────────────────────────────────────────── */
+.player{
+  position:fixed; left:0; right:0; bottom:0; z-index:30;
+  background:var(--surface); border-top:1px solid var(--border); box-shadow:var(--shadow);
+  padding:10px 16px calc(10px + env(safe-area-inset-bottom));
+  display:grid; gap:10px 20px; align-items:center;
+  grid-template-columns:auto minmax(140px,1fr) repeat(2,minmax(120px,180px)) minmax(120px,190px);
+}
+.transport{display:flex; align-items:center; gap:8px}
+.tbtn{
+  width:36px; height:36px; border-radius:50%; border:1px solid var(--border);
+  background:var(--surface-2); display:grid; place-items:center; padding:0;
+}
+.tbtn:hover{border-color:var(--accent); color:var(--accent)}
+.tbtn svg{width:15px; height:15px; fill:currentColor}
+#play{width:48px; height:48px; background:var(--accent); border-color:var(--accent); color:var(--accent-ink)}
+#play:hover{color:var(--accent-ink); filter:brightness(1.08)}
+#play svg{width:19px; height:19px}
+.prog{display:flex; flex-direction:column; gap:6px; min-width:0}
+.prog .row{display:flex; justify-content:space-between; gap:10px; font-size:11px; color:var(--dim); font-variant-numeric:tabular-nums}
+.prog .row span:first-child{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.prog .row span:last-child{flex:none}
+.track{height:4px; border-radius:99px; background:var(--surface-2); border:1px solid var(--border); overflow:hidden}
+.track i{display:block; height:100%; width:0; background:var(--accent); transition:width .18s linear}
+.ctrl{display:flex; flex-direction:column; gap:4px; min-width:0}
+.ctrl .top{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
+.ctrl .num{font-size:12px; font-weight:600; font-variant-numeric:tabular-nums}
+input[type=range]{width:100%; accent-color:var(--accent); margin:0; height:20px}
+.sel{
+  width:100%; font:inherit; font-size:12px; padding:6px 8px; color:var(--text);
+  background:var(--surface-2); border:1px solid var(--border); border-radius:8px;
+  max-width:100%; text-overflow:ellipsis;
+}
+.note{grid-column:1/-1; font-size:12px; color:var(--dim); margin:0}
+.note b{color:var(--text); font-weight:600}
+
+/* ── Pegar texto / soltar archivo ────────────────────────────── */
+.paste{
+  max-width:34em; margin:0 auto 26px; display:none; flex-direction:column; gap:10px;
+  background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:14px;
+}
+.paste.open{display:flex}
+.paste textarea{
+  font:inherit; font-size:14px; line-height:1.55; color:var(--text);
+  background:var(--surface-2); border:1px solid var(--border); border-radius:8px;
+  padding:10px; min-height:150px; resize:vertical; width:100%;
+}
+.drop{
+  position:fixed; inset:0; z-index:50; display:none; place-items:center;
+  background:color-mix(in srgb, var(--bg) 88%, transparent);
+  font-size:16px; font-weight:600; letter-spacing:-.01em;
+}
+.drop.on{display:grid}
+.drop div{border:2px dashed var(--accent); color:var(--accent); border-radius:16px; padding:44px 60px; text-align:center}
+
+@media (max-width:860px){
+  .player{grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:10px 14px; align-items:end}
+  .prog{grid-column:1; order:1}
+  #voiceCtrl{grid-column:2; order:2}
+  .transport{grid-column:1/-1; order:3; justify-content:center; gap:14px}
+  #rateCtrl{grid-column:1; order:4}
+  #volCtrl{grid-column:2; order:5}
+  .note{order:6}
+  main{padding-bottom:250px}
+}
+@media (max-width:520px){
+  .bar{gap:8px 12px}
+  .brand{flex-basis:100%; margin-right:0}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none !important; scroll-behavior:auto !important}
+}
+</style>
+
+<header class="bar">
+  <div class="brand"><span class="glyph">❧</span><b>Lector Sereno</b></div>
+
+  <div class="group">
+    <button class="btn primary" id="openBtn">Abrir archivo .txt</button>
+    <button class="btn" id="pasteBtn">Pegar texto</button>
+    <input type="file" id="file" accept=".txt,.md,.markdown,text/plain,text/markdown" hidden>
+  </div>
+
+  <div class="group">
+    <span class="lbl">Tamaño</span>
+    <div class="stepper">
+      <button id="minus" title="Reducir el texto (tecla −)" aria-label="Reducir el tamaño del texto">A−</button>
+      <span class="val" id="fsVal">20 px</span>
+      <button id="plus" title="Aumentar el texto (tecla +)" aria-label="Aumentar el tamaño del texto">A+</button>
+    </div>
+  </div>
+
+  <div class="group">
+    <span class="lbl">Tema</span>
+    <div class="themes" id="themes" role="group" aria-label="Tema de lectura"></div>
+  </div>
+
+  <p class="doc"><span id="docName">Texto de ejemplo</span><span>·</span><span id="docStats"></span></p>
+</header>
+
+<main>
+  <section class="paste" id="pastePanel">
+    <label class="lbl" for="pasteArea">Pega aquí tu texto</label>
+    <textarea id="pasteArea" placeholder="Pega o escribe el texto que quieras leer…"></textarea>
+    <div class="group">
+      <button class="btn primary" id="useText">Usar este texto</button>
+      <button class="btn" id="cancelPaste">Cancelar</button>
+    </div>
+  </section>
+  <article id="article"></article>
+  <p class="hint">
+    Toca cualquier frase para empezar a leer desde ahí.
+    Atajos: <kbd>espacio</kbd> reproducir o pausar · <kbd>←</kbd> <kbd>→</kbd> frase anterior o siguiente · <kbd>+</kbd> <kbd>−</kbd> tamaño del texto.
+  </p>
+</main>
+
+<footer class="player">
+  <div class="transport">
+    <button class="tbtn" id="prev" title="Frase anterior" aria-label="Frase anterior"><svg viewBox="0 0 24 24"><path d="M7 5h2.5v14H7zm11 0v14l-9-7z"/></svg></button>
+    <button class="tbtn" id="play" title="Leer en voz alta (espacio)" aria-label="Leer en voz alta"><svg id="playIcon" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></button>
+    <button class="tbtn" id="next" title="Frase siguiente" aria-label="Frase siguiente"><svg viewBox="0 0 24 24"><path d="M14.5 5H17v14h-2.5zM6 5l9 7-9 7z"/></svg></button>
+    <button class="tbtn" id="stop" title="Detener" aria-label="Detener la lectura"><svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1.5"/></svg></button>
+  </div>
+
+  <div class="prog">
+    <div class="row"><span id="progText">Listo para leer</span><span id="progPct">0 %</span></div>
+    <div class="track"><i id="progBar"></i></div>
+  </div>
+
+  <div class="ctrl" id="rateCtrl">
+    <div class="top"><label class="lbl" for="rate">Velocidad</label><span class="num" id="rateVal">1.0×</span></div>
+    <input type="range" id="rate" min="0.5" max="2" step="0.1" value="1">
+  </div>
+
+  <div class="ctrl" id="volCtrl">
+    <div class="top"><label class="lbl" for="vol">Volumen</label><span class="num" id="volVal">100 %</span></div>
+    <input type="range" id="vol" min="0" max="1" step="0.05" value="1">
+  </div>
+
+  <div class="ctrl" id="voiceCtrl">
+    <div class="top"><label class="lbl" for="voice">Voz</label></div>
+    <select class="sel" id="voice" aria-label="Voz de lectura"></select>
+  </div>
+
+  <p class="note" id="note" hidden></p>
+</footer>
+
+<div class="drop" id="drop"><div>Suelta aquí tu archivo de texto</div></div>
+
+<script>
+(function(){
+"use strict";
+
+const $ = s => document.querySelector(s);
+const synth = window.speechSynthesis;
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem("lector."+k); return v===null?d:v; }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem("lector."+k, v); }catch(e){} }
+};
+
+/* ── Texto de ejemplo (se reemplaza al abrir un archivo) ─────── */
+const DEMO = `Cómo usar este lector
+
+Este es un texto de ejemplo. Abre un archivo de texto con el botón de arriba, o arrástralo sobre esta página, y el contenido aparecerá aquí listo para leer.
+
+Para leer con comodidad, ajusta el tamaño de la letra con A− y A+, y elige el tema que mejor te funcione. Claro y Papel descansan la vista de día; Penumbra y Nocturno sirven de noche; Contraste está pensado para quien necesita el máximo de legibilidad.
+
+Para escuchar el texto, presiona el botón grande de reproducción. La frase que se está leyendo queda resaltada y la página la sigue sola. Si quieres empezar en otro punto, toca directamente la frase.
+
+Debajo puedes bajar o subir el volumen y ajustar la velocidad, desde media hasta el doble. Si tu equipo tiene varias voces en español instaladas, aparecerán en la lista: las de acento latinoamericano se muestran primero.
+
+Todo ocurre dentro de tu navegador. El archivo que abres no se envía a ningún servidor.`;
+
+/* ── Estado ──────────────────────────────────────────────────── */
+const S = { chunks:[], i:0, playing:false, paused:false, gen:0, words:0 };
+
+/* ── Temas ───────────────────────────────────────────────────── */
+const THEMES = [
+  {id:"auto",      label:"Auto",      sw:"linear-gradient(135deg,#FCFBF8 50%,#15181B 50%)"},
+  {id:"claro",     label:"Claro",     sw:"#FCFBF8"},
+  {id:"papel",     label:"Papel",     sw:"#F3E9D6"},
+  {id:"penumbra",  label:"Penumbra",  sw:"#33373B"},
+  {id:"nocturno",  label:"Nocturno",  sw:"#0E1012"},
+  {id:"contraste", label:"Contraste", sw:"linear-gradient(135deg,#000 50%,#FFE14D 50%)"}
+];
+let theme = store.get("tema","auto");
+const themesBox = $("#themes");
+THEMES.forEach(t => {
+  const b = document.createElement("button");
+  b.className = "chip"; b.type = "button"; b.dataset.id = t.id;
+  const sw = document.createElement("span"); sw.className = "sw"; sw.style.background = t.sw;
+  b.append(sw, document.createTextNode(t.label));
+  b.addEventListener("click", () => setTheme(t.id));
+  themesBox.appendChild(b);
+});
+function setTheme(id){
+  theme = id; store.set("tema", id);
+  if(id === "auto") document.documentElement.removeAttribute("data-theme");
+  else document.documentElement.setAttribute("data-theme", id);
+  themesBox.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.id === id)));
+}
+setTheme(THEMES.some(t => t.id === theme) ? theme : "auto");
+
+/* ── Tamaño de letra ─────────────────────────────────────────── */
+const SIZES = [16,17,18,19,20,22,24,26,28,31,34,38];
+let si = SIZES.indexOf(parseInt(store.get("tam","20"),10));
+if(si < 0) si = 4;
+function setSize(n){
+  si = Math.max(0, Math.min(SIZES.length-1, n));
+  document.documentElement.style.setProperty("--fs", SIZES[si]+"px");
+  $("#fsVal").textContent = SIZES[si]+" px";
+  $("#minus").disabled = si === 0;
+  $("#plus").disabled = si === SIZES.length-1;
+  store.set("tam", SIZES[si]);
+}
+$("#minus").addEventListener("click", () => setSize(si-1));
+$("#plus").addEventListener("click", () => setSize(si+1));
+setSize(si);
+
+/* ── Partir el texto en frases ───────────────────────────────── */
+const MAX = 170;
+const ABBR = /^(sr|sra|srta|dr|dra|lic|ing|prof|ud|uds|etc|ej|p|pág|pag|núm|num|fig|vol|av|aprox|máx|mín|min|max|ss|art|cap|ed|tel|dept|depto)\.$/i;
+/* Un punto solo cierra la frase si le sigue un espacio y no viene de una abreviatura. */
+function cortes(p){
+  const out = []; let start = 0;
+  for(let i = 0; i < p.length; i++){
+    if(".!?…".indexOf(p[i]) < 0) continue;
+    let j = i;
+    while(j+1 < p.length && ".!?…\"'”’»)]".indexOf(p[j+1]) >= 0) j++;
+    const next = p[j+1];
+    if(next !== undefined && !/\s/.test(next)){ i = j; continue; }        /* .txt, 3.14, ejemplo.com */
+    const piece = p.slice(start, j+1);
+    const last = piece.trim().split(/\s+/).pop() || "";
+    if(p[j] === "." && (ABBR.test(last) || /^[\wÁÉÍÓÚÑ]\.$/.test(last))){ i = j; continue; }
+    const t = piece.trim(); if(t) out.push(t);
+    start = j+1; i = j;
+  }
+  const tail = p.slice(start).trim();
+  if(tail) out.push(tail);
+  return out.length ? out : [p];
+}
+
+function sentences(p){
+  const rough = cortes(p);
+  const out = [];
+  rough.forEach(raw => {
+    const s = raw.trim();
+    if(!s) return;
+    if(s.length < 26 && out.length){ out[out.length-1] += " " + s; return; }
+    if(s.length <= MAX){ out.push(s); return; }
+    let rest = s;
+    while(rest.length > MAX){
+      let cut = rest.lastIndexOf(",", MAX);
+      if(cut < MAX*0.5) cut = rest.lastIndexOf(" ", MAX);
+      if(cut < MAX*0.4) cut = MAX;
+      out.push(rest.slice(0, cut+1).trim());
+      rest = rest.slice(cut+1).trim();
+    }
+    if(rest) out.push(rest);
+  });
+  return out.length ? out : [p];
+}
+
+/* ── Pintar el texto ─────────────────────────────────────────── */
+const article = $("#article");
+function render(raw, name){
+  stop();
+  piperCache.forEach(u => URL.revokeObjectURL(u));
+  piperCache.clear();
+  const clean = String(raw).replace(/\r\n?/g, "\n").replace(/ /g, " ").trim();
+  let paras = clean.split(/\n{2,}/).map(t => t.trim()).filter(Boolean);
+  if(paras.length < 2) paras = clean.split(/\n/).map(t => t.trim()).filter(Boolean);
+
+  S.chunks = [];
+  article.textContent = "";
+  paras.forEach((p, pi) => {
+    const el = document.createElement("p");
+    if(pi === 0 && p.length < 90 && !/[.!?]$/.test(p)) el.className = "h";
+    sentences(p.replace(/\n/g, " ")).forEach(s => {
+      const sp = document.createElement("span");
+      sp.className = "sent"; sp.textContent = s;
+      sp.dataset.i = S.chunks.length; sp.title = "Leer desde aquí";
+      el.append(sp, document.createTextNode(" "));
+      S.chunks.push({text:s, el:sp});
+    });
+    article.appendChild(el);
+  });
+
+  S.words = (clean.match(/[\wÀ-ÿ'’-]+/g) || []).length;
+  $("#docName").textContent = name;
+  stats(); progress();
+  window.scrollTo({top:0, behavior:"auto"});
+}
+function stats(){
+  const wpm = 165 * Number($("#rate").value);
+  const min = Math.max(1, Math.round(S.words / wpm));
+  $("#docStats").textContent =
+    S.words.toLocaleString("es") + " palabras · " + S.chunks.length.toLocaleString("es") +
+    " frases · ≈ " + min + " min en voz a " + Number($("#rate").value).toFixed(1) + "×";
+}
+
+/* ── Abrir archivos ──────────────────────────────────────────── */
+function loadFile(f){
+  if(!f) return;
+  const ok = /\.(txt|md|markdown|text|log|csv)$/i.test(f.name) || /^text\//.test(f.type) || f.type === "";
+  if(!ok){ note("Ese archivo no es de texto. Usa un archivo <b>.txt</b> (o .md); para un PDF o un Word, guarda antes el contenido como texto plano.", true); return; }
+  const r = new FileReader();
+  r.onload = () => {
+    render(r.result, f.name);
+    store.set("txt", String(r.result).slice(0, 300000));
+    store.set("nom", f.name);
+    note("");
+  };
+  r.onerror = () => note("No se pudo leer el archivo. Intenta abrirlo de nuevo.", true);
+  r.readAsText(f, "utf-8");
+}
+$("#openBtn").addEventListener("click", () => $("#file").click());
+$("#file").addEventListener("change", e => { loadFile(e.target.files[0]); e.target.value = ""; });
+
+const drop = $("#drop");
+let dragDepth = 0;
+window.addEventListener("dragenter", e => { e.preventDefault(); if(++dragDepth) drop.classList.add("on"); });
+window.addEventListener("dragover", e => e.preventDefault());
+window.addEventListener("dragleave", () => { if(--dragDepth <= 0){ dragDepth = 0; drop.classList.remove("on"); } });
+window.addEventListener("drop", e => {
+  e.preventDefault(); dragDepth = 0; drop.classList.remove("on");
+  if(e.dataTransfer.files && e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]);
+});
+
+const panel = $("#pastePanel");
+$("#pasteBtn").addEventListener("click", () => {
+  panel.classList.toggle("open");
+  if(panel.classList.contains("open")) $("#pasteArea").focus();
+});
+$("#cancelPaste").addEventListener("click", () => panel.classList.remove("open"));
+$("#useText").addEventListener("click", () => {
+  const t = $("#pasteArea").value.trim();
+  if(!t){ note("Escribe o pega algún texto antes de continuar.", true); return; }
+  render(t, "Texto pegado");
+  store.set("txt", t.slice(0, 300000)); store.set("nom", "Texto pegado");
+  panel.classList.remove("open"); note("");
+});
+
+/* ── Voces ───────────────────────────────────────────────────── */
+const PREF = ["es-MX","es-US","es-419","es-CO","es-AR","es-CL","es-PE","es-VE","es-EC","es-GT","es-CR","es-PA","es-DO","es-BO","es-UY","es-PY","es-HN","es-NI","es-SV","es-PR","es-CU"];
+const voiceSel = $("#voice");
+let voices = [], voice = null;
+let motor = store.get("motor", "sistema");
+
+/* Las voces las instala el sistema operativo, no la página: Paulina solo existe
+   en macOS e iOS. Esta lista busca en cada equipo su equivalente más cercano,
+   de mejor a peor, para que el lector suene parecido en cualquier plataforma. */
+const BUENAS = [
+  "paulina",                          /* macOS, iOS · es-MX */
+  "angélica", "angelica",             /* macOS reciente · es-MX */
+  "dalia",                            /* Windows 11 y Edge natural · es-MX */
+  "sabina",                           /* Windows 10 · es-MX */
+  "google español de estados unidos", /* Chrome y Android · es-US */
+  "jorge",                            /* Edge natural · es-MX */
+  "raúl", "raul",                     /* Windows · es-MX */
+  "juan",                             /* macOS · es-MX */
+  "francisca",                        /* macOS · es-CL */
+  "diego",                            /* macOS · es-AR */
+  "google español"                    /* Chrome · es-ES */
+];
+/* Voces de fantasía que traen macOS e iOS: sirven para jugar, no para leer. */
+const NOVEDAD = ["eddy","flo","grandma","grandpa","reed","rocko","sandy","shelley","superstar",
+  "bells","boing","bubbles","jester","organ","trinoids","whisper","wobble","zarvox","albert","cellos"];
+function novedad(v){
+  const n = (v.name || "").toLowerCase().split(" (")[0].trim();
+  return NOVEDAD.indexOf(n) >= 0;
+}
+function esLatina(v){ return PREF.indexOf((v.lang || "").replace("_", "-")) >= 0; }
+function conocida(v){
+  const n = (v.name || "").toLowerCase();
+  return BUENAS.findIndex(b => n.indexOf(b) >= 0);
+}
+function rank(v){
+  const lang = (v.lang || "").replace("_", "-");
+  const c = conocida(v), lat = PREF.indexOf(lang);
+  if(novedad(v)) return 700 + (lat >= 0 ? 0 : 10);
+  if(c >= 0 && lat >= 0) return c;          /* nombre conocido y acento latino */
+  if(lat >= 0) return 50 + lat;             /* latina, aunque no esté en la lista */
+  if(c >= 0) return 250;                    /* voz buena, pero de España */
+  if(/^es-ES/i.test(lang)) return 320;
+  if(/^es/i.test(lang)) return 300;
+  return 900;
+}
+function esc(t){ return String(t).replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
+
+const GRUPOS = [
+  ["Recomendadas · español latino", r => r < 50],
+  ["Otras voces en español latino", r => r >= 50 && r < 250],
+  ["Voces en español de España",    r => r >= 250 && r < 700],
+  ["Voces de fantasía del sistema",  r => r >= 700 && r < 900],
+  ["Otras voces",                   r => r >= 900]
+];
+
+function loadVoices(){
+  if(!synth) return;
+  const all = synth.getVoices() || [];
+  const es = all.filter(v => /^es/i.test(v.lang || ""));
+  voices = (es.length ? es : all).sort((a,b) => rank(a)-rank(b) || a.name.localeCompare(b.name));
+
+  voiceSel.textContent = "";
+  const gPiper = document.createElement("optgroup");
+  gPiper.label = "Voz descargable · igual en todo equipo";
+  const oPiper = document.createElement("option");
+  oPiper.value = "piper";
+  oPiper.textContent = "Piper · es_MX-claude-high · 63 MB";
+  gPiper.appendChild(oPiper);
+  voiceSel.appendChild(gPiper);
+
+  GRUPOS.forEach(([titulo, filtro]) => {
+    const lista = voices.map((v, i) => [v, i]).filter(par => filtro(rank(par[0])));
+    if(!lista.length) return;
+    const g = document.createElement("optgroup");
+    g.label = titulo;
+    lista.forEach(par => {
+      const o = document.createElement("option");
+      o.value = par[1];
+      o.textContent = (par[1] === 0 ? "★ " : "") + par[0].name + " · " + par[0].lang;
+      g.appendChild(o);
+    });
+    voiceSel.appendChild(g);
+  });
+
+  /* Se respeta la voz que hayas elegido; si no existe en este equipo, se toma la mejor. */
+  const saved = store.get("voz", "");
+  let idx = -1;
+  if(saved){
+    idx = voices.findIndex(v => v.name + "|" + v.lang === saved);
+    if(idx < 0){
+      const nom = saved.split("|")[0].toLowerCase();
+      idx = voices.findIndex(v => v.name.toLowerCase() === nom);
+    }
+  }
+  if(idx < 0) idx = voices.length ? 0 : -1;
+  if(idx >= 0){ voiceSel.value = idx; voice = voices[idx]; }
+  if(motor === "piper" && piperListo) voiceSel.value = "piper";
+
+  if(!voices.length){
+    note("Tu navegador no tiene voces instaladas para leer en voz alta. En Windows y Android puedes agregar una voz en español desde los ajustes del sistema.", true);
+  } else if(!es.length){
+    note("No hay voces en español instaladas en este equipo; se usará la voz disponible. Puedes agregar una voz en español desde los ajustes del sistema.", true);
+  } else if(conocida(voices[idx]) < 0 || !esLatina(voices[idx])){
+    note("En este equipo no está Paulina ni otra voz latina de las recomendadas. Se eligió <b>" + esc(voices[idx].name) + "</b>, la mejor disponible aquí; puedes cambiarla en la lista.", true);
+  } else {
+    note("");
+  }
+}
+voiceSel.addEventListener("change", () => {
+  if(voiceSel.value === "piper"){ activarPiper(); return; }
+  motor = "sistema"; store.set("motor", "sistema");
+  voice = voices[voiceSel.value] || null;
+  if(voice){ store.set("voz", voice.name + "|" + voice.lang); note(""); }
+  if(S.playing) restart();
+});
+if(synth){
+  loadVoices();
+  synth.addEventListener ? synth.addEventListener("voiceschanged", loadVoices) : (synth.onvoiceschanged = loadVoices);
+  setTimeout(loadVoices, 400);
+} else {
+  note("Este navegador no admite la lectura en voz alta. El texto, los temas y el tamaño de letra funcionan igual.", true);
+  ["play","prev","next","stop","rate","vol","voice"].forEach(id => { $("#"+id).disabled = true; });
+}
+
+/* ── Voz descargable (Piper) ──────────────────────────────────────
+   La misma voz en cualquier plataforma: el modelo se descarga una vez,
+   queda guardado en este navegador y después funciona sin conexión.   */
+const PIPER_ID  = "es_MX-claude-high";
+const PIPER_LIB = "https://cdn.jsdelivr.net/npm/@diffusionstudio/vits-web@1.0.3/+esm";
+const audio = new Audio();
+audio.preservesPitch = audio.mozPreservesPitch = audio.webkitPreservesPitch = true;
+const piperCache = new Map();
+let piperLib = null, piperListo = false, audioLibre = false;
+
+/* iOS solo deja sonar audio que nació de un toque: lo destrabamos en el primero. */
+function desbloquearAudio(){
+  if(audioLibre) return;
+  audioLibre = true;
+  try{
+    audio.src = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=";
+    const pr = audio.play();
+    if(pr) pr.then(() => { audio.pause(); audio.currentTime = 0; }).catch(() => {});
+  }catch(e){}
+}
+async function cargarPiper(){
+  if(!piperLib) piperLib = await import(PIPER_LIB);
+  return piperLib;
+}
+async function activarPiper(){
+  stop();
+  try{
+    $("#progText").textContent = "Cargando el motor de voz…";
+    const tts = await cargarPiper();
+    if((await tts.stored()).indexOf(PIPER_ID) < 0){
+      note("Descargando la voz <b>" + PIPER_ID + "</b> · 63 MB. Solo la primera vez: después queda guardada en este navegador y funciona sin conexión.", true);
+      await tts.download(PIPER_ID, p => {
+        const pct = p.total ? Math.round(p.loaded / p.total * 100) : 0;
+        $("#progText").textContent = "Descargando la voz · " + pct + " %";
+        $("#progPct").textContent = pct + " %";
+        $("#progBar").style.width = pct + "%";
+      });
+    }
+    motor = "piper"; piperListo = true; store.set("motor", "piper");
+    note("Voz <b>" + PIPER_ID + "</b> lista. Suena igual en cualquier equipo y ya no necesita conexión.", true);
+    progress();
+  }catch(e){
+    motor = "sistema"; piperListo = false; piperLib = null;
+    store.set("motor", "sistema");
+    if(voices.length){ voiceSel.value = 0; voice = voices[0]; }
+    note("No se pudo activar la voz descargable aquí: " + esc(e && e.message ? e.message : e) +
+         ". Se usará la voz del sistema. Suele pasar al abrir el archivo con doble clic (file://), sin conexión, o dentro del enlace compartido.", true);
+    progress();
+  }
+}
+async function piperAudio(i){
+  if(piperCache.has(i)) return piperCache.get(i);
+  const tts = await cargarPiper();
+  const wav = await tts.predict({ text: S.chunks[i].text, voiceId: PIPER_ID });
+  const url = URL.createObjectURL(wav);
+  piperCache.set(i, url);
+  if(piperCache.size > 6){
+    const viejo = piperCache.keys().next().value;
+    URL.revokeObjectURL(piperCache.get(viejo));
+    piperCache.delete(viejo);
+  }
+  return url;
+}
+async function hablarPiper(){
+  const g = S.gen, i = S.i;
+  highlight();
+  if(!piperCache.has(i)){
+    $("#progText").textContent = "Preparando la frase " + (i + 1) + " de " + S.chunks.length + "…";
+  }
+  let url;
+  try{
+    url = await piperAudio(i);
+  }catch(e){
+    stop();
+    note("No se pudo generar el audio de esta frase: " + esc(e && e.message ? e.message : e), true);
+    return;
+  }
+  if(g !== S.gen || !S.playing) return;
+  audio.src = url;
+  audio.volume = volume();
+  audio.playbackRate = rate();
+  audio.onended = () => {
+    if(g !== S.gen || !S.playing) return;
+    if(S.i < S.chunks.length - 1){ S.i++; hablarPiper(); }
+    else { stop(); $("#progText").textContent = "Lectura terminada"; }
+  };
+  audio.play().catch(() => {});
+  progress();
+  if(i + 1 < S.chunks.length) piperAudio(i + 1).catch(() => {});   /* adelanta la siguiente */
+}
+
+/* ── Lectura en voz alta ─────────────────────────────────────── */
+const isChromium = /Chrome|Chromium|Edg|OPR/.test(navigator.userAgent) && !/CriOS|FxiOS/.test(navigator.userAgent);
+let keepAlive = null;
+
+function rate(){ return Number($("#rate").value); }
+function volume(){ return Number($("#vol").value); }
+
+function speakCurrent(){
+  if(!S.chunks[S.i]) return;
+  if(motor === "piper" && piperListo){ hablarPiper(); return; }
+  if(!synth) return;
+  const u = new SpeechSynthesisUtterance(S.chunks[S.i].text);
+  const g = ++S.gen;
+  if(voice) u.voice = voice;
+  u.lang = (voice && voice.lang) || "es-MX";
+  u.rate = rate(); u.volume = volume(); u.pitch = 1;
+  u.onend = () => {
+    if(g !== S.gen || !S.playing) return;
+    if(S.i < S.chunks.length - 1){ S.i++; highlight(); speakCurrent(); }
+    else { stop(); $("#progText").textContent = "Lectura terminada"; }
+  };
+  u.onerror = ev => {
+    if(g !== S.gen) return;
+    if(ev.error === "interrupted" || ev.error === "canceled") return;
+    stop(); note("La lectura se interrumpió. Presiona reproducir para continuar.", true);
+  };
+  highlight();
+  synth.speak(u);
+  guard();
+}
+/* Chrome corta las frases largas pasados ~15 s: lo evitamos con un pulso. */
+function guard(){
+  clearInterval(keepAlive);
+  if(!isChromium || rate() >= 1) return;
+  keepAlive = setInterval(() => {
+    if(S.playing && !S.paused && synth.speaking && !synth.paused){ synth.pause(); synth.resume(); }
+  }, 9000);
+}
+function playFrom(i){
+  if(!S.chunks.length || (!synth && !piperListo)) return;
+  desbloquearAudio();
+  S.gen++;
+  if(synth) synth.cancel();
+  audio.pause();
+  S.i = Math.max(0, Math.min(S.chunks.length-1, i));
+  S.playing = true; S.paused = false; icon();
+  const espera = (motor === "piper" && piperListo) ? 0 : 80;
+  setTimeout(() => { if(S.playing) speakCurrent(); }, espera);
+}
+function restart(){ if(S.playing) playFrom(S.i); }
+function toggle(){
+  if(!S.chunks.length) return;
+  desbloquearAudio();
+  if(!S.playing){ playFrom(S.i); return; }
+  if(motor === "piper" && piperListo){
+    if(S.paused){ audio.play().catch(() => {}); S.paused = false; }
+    else { audio.pause(); S.paused = true; }
+    icon(); progress(); return;
+  }
+  if(!synth) return;
+  if(S.paused){
+    synth.resume();
+    if(!synth.speaking) speakCurrent();   /* algunos navegadores olvidan la frase */
+    S.paused = false;
+  } else {
+    synth.pause(); S.paused = true;
+  }
+  icon(); progress();
+}
+function stop(){
+  S.playing = false; S.paused = false; S.gen++;
+  clearInterval(keepAlive);
+  if(synth) synth.cancel();
+  audio.pause();
+  icon(); progress();
+}
+function step(d){
+  const n = Math.max(0, Math.min(S.chunks.length-1, S.i + d));
+  if(S.playing) playFrom(n);
+  else { S.i = n; highlight(); progress(); }
+}
+function highlight(){
+  S.chunks.forEach((c, n) => c.el.classList.toggle("on", n === S.i));
+  const el = S.chunks[S.i] && S.chunks[S.i].el;
+  if(el){
+    const r = el.getBoundingClientRect();
+    const top = 90, bottom = window.innerHeight - 190;
+    if(r.top < top || r.bottom > bottom){
+      const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      el.scrollIntoView({block:"center", behavior: smooth ? "smooth" : "auto"});
+    }
+  }
+  progress();
+}
+function icon(){
+  const p = $("#playIcon");
+  p.innerHTML = (S.playing && !S.paused)
+    ? '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>'
+    : '<path d="M7 4l13 8-13 8z"/>';
+  $("#play").title = (S.playing && !S.paused) ? "Pausar (espacio)" : "Leer en voz alta (espacio)";
+}
+function progress(){
+  const total = S.chunks.length || 1;
+  const pct = S.playing || S.i > 0 ? Math.round((S.i + (S.playing ? 1 : 0)) / total * 100) : 0;
+  $("#progBar").style.width = pct + "%";
+  $("#progPct").textContent = pct + " %";
+  $("#progText").textContent = S.playing
+    ? (S.paused ? "En pausa · frase " : "Leyendo · frase ") + (S.i+1) + " de " + total
+    : (S.i > 0 ? "Detenido en la frase " + (S.i+1) : "Listo para leer");
+}
+function note(html, show){
+  const n = $("#note");
+  n.innerHTML = html || "";
+  n.hidden = !show || !html;
+}
+
+$("#play").addEventListener("click", toggle);
+$("#stop").addEventListener("click", () => { stop(); S.i = 0; highlight(); });
+$("#prev").addEventListener("click", () => step(-1));
+$("#next").addEventListener("click", () => step(1));
+article.addEventListener("click", e => {
+  const s = e.target.closest(".sent");
+  if(s) playFrom(Number(s.dataset.i));
+});
+
+function enPiper(){ return motor === "piper" && piperListo; }
+$("#rate").addEventListener("input", () => {
+  $("#rateVal").textContent = rate().toFixed(1) + "×"; stats();
+  if(enPiper()) audio.playbackRate = rate();
+});
+$("#rate").addEventListener("change", () => { store.set("vel", rate()); if(!enPiper()) restart(); });
+$("#vol").addEventListener("input", () => {
+  $("#volVal").textContent = Math.round(volume()*100) + " %";
+  if(enPiper()) audio.volume = volume();
+});
+$("#vol").addEventListener("change", () => { store.set("vol", volume()); if(!enPiper()) restart(); });
+
+document.addEventListener("keydown", e => {
+  const t = e.target;
+  if(t && (t.tagName === "TEXTAREA" || t.tagName === "INPUT" || t.tagName === "SELECT")) return;
+  if(e.key === " "){ e.preventDefault(); toggle(); }
+  else if(e.key === "ArrowRight"){ e.preventDefault(); step(1); }
+  else if(e.key === "ArrowLeft"){ e.preventDefault(); step(-1); }
+  else if(e.key === "+" || e.key === "="){ setSize(si+1); }
+  else if(e.key === "-" || e.key === "_"){ setSize(si-1); }
+});
+window.addEventListener("beforeunload", () => { if(synth) synth.cancel(); });
+
+/* ── Arranque ────────────────────────────────────────────────── */
+$("#rate").value = store.get("vel","1");
+$("#vol").value = store.get("vol","1");
+$("#rateVal").textContent = rate().toFixed(1) + "×";
+$("#volVal").textContent = Math.round(volume()*100) + " %";
+if(store.get("motor", "") === "piper"){
+  (async () => {
+    try{
+      const tts = await cargarPiper();
+      if((await tts.stored()).indexOf(PIPER_ID) >= 0){
+        motor = "piper"; piperListo = true;
+        voiceSel.value = "piper";
+        note("Voz <b>" + PIPER_ID + "</b> lista, guardada en este navegador.", true);
+      }
+    }catch(e){ /* sin conexión o entorno restringido: sigue la voz del sistema */ }
+  })();
+}
+const savedTxt = store.get("txt", "");
+render(savedTxt || DEMO, savedTxt ? store.get("nom","Tu texto") : "Texto de ejemplo");
+})();
+</script>
