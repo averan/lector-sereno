@@ -12,49 +12,44 @@
   --text:#23201C; --dim:#6B655C; --border:#DCD6CC;
   --accent:#14574E; --accent-ink:#FFFFFF; --accent-soft:#DDEBE7;
   --mark:#F7DFA6; --mark-text:#2A2318;
-  --shadow:0 1px 2px rgba(35,32,28,.07), 0 -6px 24px rgba(35,32,28,.06);
+  --shadow:0 1px 2px rgba(35,32,28,.07), 0 10px 30px rgba(35,32,28,.10);
   --fs:20px; --lh:1.68;
 }
-/* Papel: sepia cálido */
 :root[data-theme="papel"]{
   --bg:#E3D7BF; --surface:#F3E9D6; --surface-2:#EADEC6;
   --text:#37301F; --dim:#7B6C52; --border:#D5C5A5;
   --accent:#7A4A1E; --accent-ink:#FBF3E4; --accent-soft:#E4D2B2;
   --mark:#D9B96A; --mark-text:#2E2612;
-  --shadow:0 1px 2px rgba(55,48,31,.08), 0 -6px 24px rgba(55,48,31,.08);
+  --shadow:0 1px 2px rgba(55,48,31,.08), 0 10px 30px rgba(55,48,31,.14);
 }
-/* Penumbra: gris suave, poco contraste */
 :root[data-theme="penumbra"]{
   --bg:#2A2D30; --surface:#33373B; --surface-2:#3B4045;
   --text:#D5D1C9; --dim:#9B968D; --border:#464B50;
   --accent:#84C3B7; --accent-ink:#16211F; --accent-soft:#3E4F4C;
   --mark:#6D5A2C; --mark-text:#F6EEDC;
-  --shadow:0 1px 2px rgba(0,0,0,.3), 0 -6px 24px rgba(0,0,0,.28);
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
 }
-/* Nocturno: casi negro */
 :root[data-theme="nocturno"]{
   --bg:#0E1012; --surface:#15181B; --surface-2:#1D2125;
   --text:#C7C4BE; --dim:#8A857D; --border:#272B30;
   --accent:#6FBFB4; --accent-ink:#0C1413; --accent-soft:#1E3330;
   --mark:#4C3D18; --mark-text:#F1E7CF;
-  --shadow:0 1px 2px rgba(0,0,0,.5), 0 -6px 24px rgba(0,0,0,.45);
+  --shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 30px rgba(0,0,0,.5);
 }
-/* Contraste: máxima legibilidad */
 :root[data-theme="contraste"]{
   --bg:#000000; --surface:#000000; --surface-2:#111111;
   --text:#FFFFFF; --dim:#DDDDDD; --border:#FFFFFF;
   --accent:#FFE14D; --accent-ink:#000000; --accent-soft:#3A3200;
   --mark:#FFE14D; --mark-text:#000000;
-  --shadow:none;
+  --shadow:0 0 0 1px #FFFFFF;
 }
-/* Auto: sigue al sistema solo cuando no hay tema elegido */
 @media (prefers-color-scheme: dark){
   :root:not([data-theme]){
     --bg:#0E1012; --surface:#15181B; --surface-2:#1D2125;
     --text:#C7C4BE; --dim:#8A857D; --border:#272B30;
     --accent:#6FBFB4; --accent-ink:#0C1413; --accent-soft:#1E3330;
     --mark:#4C3D18; --mark-text:#F1E7CF;
-    --shadow:0 1px 2px rgba(0,0,0,.5), 0 -6px 24px rgba(0,0,0,.45);
+    --shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 30px rgba(0,0,0,.5);
   }
 }
 
@@ -64,76 +59,101 @@ body{
   font-family:"Archivo","Helvetica Neue",Arial,sans-serif;
   -webkit-text-size-adjust:100%;
 }
-:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
-
-/* ── Barra superior ──────────────────────────────────────────── */
-.bar{
-  position:sticky; top:0; z-index:20;
-  background:var(--surface); border-bottom:1px solid var(--border);
-  display:flex; flex-wrap:wrap; align-items:center; gap:10px 18px;
-  padding:10px 16px;
-}
-.brand{display:flex; align-items:baseline; gap:8px; margin-right:auto}
-.brand b{font-weight:700; font-size:15px; letter-spacing:-.01em}
-.brand .glyph{color:var(--accent); font-size:15px}
-.doc{
-  font-size:12px; color:var(--dim); display:flex; gap:8px; align-items:center;
-  min-width:0; flex-basis:100%; order:3; font-variant-numeric:tabular-nums;
-}
-.doc #docName{
-  color:var(--text); font-weight:500;
-  max-width:min(48ch,100%); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
-}
-.group{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
-.lbl{
-  font-size:10px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
-  color:var(--dim); white-space:nowrap;
-}
-
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:5px}
 button{font:inherit; color:inherit; cursor:pointer}
+
+/* ── Barra superior: mínima ──────────────────────────────────── */
+.bar{
+  position:sticky; top:0; z-index:30;
+  background:var(--surface); border-bottom:1px solid var(--border);
+  display:flex; align-items:center; gap:10px; padding:0 12px; height:46px;
+}
+.brand{display:flex; align-items:baseline; gap:7px; flex:none}
+.brand .glyph{color:var(--accent); font-size:14px}
+.brand b{font-size:14px; font-weight:700; letter-spacing:-.01em}
+#docName{
+  flex:1; min-width:0; font-size:12px; color:var(--dim);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
 .btn{
   background:var(--surface-2); border:1px solid var(--border); color:var(--text);
-  border-radius:8px; padding:7px 12px; font-size:13px; font-weight:500;
-  display:inline-flex; align-items:center; gap:7px;
+  border-radius:8px; padding:6px 11px; font-size:13px; font-weight:500;
+  display:inline-flex; align-items:center; gap:6px; flex:none;
 }
 .btn:hover{border-color:var(--accent); color:var(--accent)}
 .btn.primary{background:var(--accent); border-color:var(--accent); color:var(--accent-ink)}
 .btn.primary:hover{color:var(--accent-ink); filter:brightness(1.08)}
+.btn .caret{font-size:9px; opacity:.7}
+#ajustesBtn[aria-expanded="true"]{background:var(--accent); border-color:var(--accent); color:var(--accent-ink)}
 
-/* Escalón de tamaño */
-.stepper{display:flex; align-items:stretch; border:1px solid var(--border); border-radius:8px; overflow:hidden}
-.stepper button{
-  background:var(--surface-2); border:0; padding:6px 11px; line-height:1;
-  font-size:15px; font-weight:600; color:var(--text);
+/* ── Panel de ajustes ────────────────────────────────────────── */
+.panel{
+  position:fixed; z-index:40; top:54px; right:10px;
+  width:min(380px, calc(100vw - 20px));
+  max-height:calc(100vh - 120px); overflow:auto;
+  background:var(--surface); border:1px solid var(--border); border-radius:12px;
+  box-shadow:var(--shadow); padding:4px 16px 16px;
 }
+.panel[hidden]{display:none}
+.panel section{display:grid; gap:9px; padding:14px 0; border-top:1px solid var(--border)}
+.panel section:first-of-type{border-top:0}
+.lbl{
+  font-size:10px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--dim); white-space:nowrap;
+}
+.fila{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.stats{font-size:12px; color:var(--dim); font-variant-numeric:tabular-nums}
+
+.stepper{display:flex; border:1px solid var(--border); border-radius:8px; overflow:hidden}
+.stepper button{background:var(--surface-2); border:0; padding:7px 14px; line-height:1; font-size:15px; font-weight:600}
 .stepper button:hover:not(:disabled){background:var(--accent); color:var(--accent-ink)}
 .stepper button:disabled{opacity:.35; cursor:default}
 .stepper .val{
-  min-width:52px; display:grid; place-items:center; font-size:12px; font-weight:600;
-  background:var(--surface); border-inline:1px solid var(--border);
-  font-variant-numeric:tabular-nums; color:var(--dim);
+  flex:1; display:grid; place-items:center; font-size:12px; font-weight:600; color:var(--dim);
+  background:var(--surface); border-inline:1px solid var(--border); font-variant-numeric:tabular-nums;
 }
 
-/* Temas */
-.themes{display:flex; gap:6px; flex-wrap:wrap}
+.temas{display:grid; grid-template-columns:repeat(3,1fr); gap:6px}
 .chip{
   background:transparent; border:1px solid var(--border); border-radius:999px;
-  padding:5px 11px 5px 6px; font-size:12px; display:inline-flex; align-items:center; gap:6px;
+  padding:6px 8px; font-size:12px; display:flex; align-items:center; gap:6px; justify-content:center;
 }
-.chip .sw{width:14px; height:14px; border-radius:50%; border:1px solid rgba(128,128,128,.45); flex:none}
+.chip .sw{width:13px; height:13px; border-radius:50%; border:1px solid rgba(128,128,128,.45); flex:none}
 .chip[aria-pressed="true"]{border-color:var(--accent); color:var(--accent); font-weight:600; box-shadow:inset 0 0 0 1px var(--accent)}
 
-/* ── Lectura ─────────────────────────────────────────────────── */
-main{padding:34px 18px 210px}
+.sel, .area{
+  width:100%; font:inherit; font-size:13px; color:var(--text);
+  background:var(--surface-2); border:1px solid var(--border); border-radius:8px; padding:8px;
+}
+.area{min-height:130px; line-height:1.5; resize:vertical}
+.deslizador{display:grid; gap:5px}
+.deslizador .top{display:flex; justify-content:space-between; align-items:baseline}
+.deslizador .num{font-size:12px; font-weight:600; font-variant-numeric:tabular-nums}
+input[type=range]{width:100%; accent-color:var(--accent); margin:0}
+.atajos{font-size:11.5px; color:var(--dim); line-height:1.7}
+.atajos kbd{
+  font:inherit; font-size:10.5px; font-weight:600; border:1px solid var(--border);
+  background:var(--surface-2); border-radius:4px; padding:1px 5px;
+}
+#pegar[hidden]{display:none}
+
+/* ── Aviso ───────────────────────────────────────────────────── */
+.aviso{
+  background:var(--accent-soft); color:var(--text); border-bottom:1px solid var(--border);
+  font-size:12px; line-height:1.5; padding:9px 12px; display:flex; gap:10px; align-items:flex-start;
+}
+.aviso[hidden]{display:none}
+.aviso p{margin:0; flex:1}
+.aviso button{background:none; border:0; color:var(--dim); font-size:15px; line-height:1; padding:0 2px}
+
+/* ── Lectura: el área grande ─────────────────────────────────── */
+main{padding:30px 18px 96px}
 #article{
   max-width:34em; margin:0 auto;
   font-family:"Literata",Georgia,"Times New Roman",serif;
-  font-size:var(--fs); line-height:var(--lh); font-weight:400;
-  text-wrap:pretty;
+  font-size:var(--fs); line-height:var(--lh); text-wrap:pretty;
 }
-#article .h{
-  font-size:1.15em; font-weight:600; margin:0 0 1.1em; letter-spacing:-.01em; text-wrap:balance;
-}
+#article .h{font-size:1.15em; font-weight:600; margin:0 0 1.1em; letter-spacing:-.01em; text-wrap:balance}
 #article p{margin:0 0 1.05em}
 .sent{border-radius:4px; transition:background .12s ease}
 .sent:hover{background:var(--accent-soft); cursor:pointer}
@@ -142,83 +162,45 @@ main{padding:34px 18px 210px}
   box-decoration-break:clone; -webkit-box-decoration-break:clone;
   padding:.06em .1em; margin:0 -.1em;
 }
-.hint{
-  max-width:34em; margin:26px auto 0; padding-top:16px; border-top:1px solid var(--border);
-  font-size:12px; color:var(--dim); line-height:1.6;
-}
-.hint kbd{
-  font:inherit; font-size:11px; font-weight:600; border:1px solid var(--border);
-  background:var(--surface-2); border-radius:4px; padding:1px 5px;
-}
 
-/* ── Reproductor ─────────────────────────────────────────────── */
+/* ── Reproductor: una sola fila ──────────────────────────────── */
 .player{
   position:fixed; left:0; right:0; bottom:0; z-index:30;
-  background:var(--surface); border-top:1px solid var(--border); box-shadow:var(--shadow);
-  padding:10px 16px calc(10px + env(safe-area-inset-bottom));
-  display:grid; gap:10px 20px; align-items:center;
-  grid-template-columns:auto minmax(140px,1fr) repeat(2,minmax(120px,180px)) minmax(120px,190px);
+  background:var(--surface); border-top:1px solid var(--border);
+  padding:7px 12px calc(7px + env(safe-area-inset-bottom));
+  display:flex; align-items:center; gap:12px;
 }
-.transport{display:flex; align-items:center; gap:8px}
+.transport{display:flex; align-items:center; gap:7px; flex:none}
 .tbtn{
-  width:36px; height:36px; border-radius:50%; border:1px solid var(--border);
+  width:34px; height:34px; border-radius:50%; border:1px solid var(--border);
   background:var(--surface-2); display:grid; place-items:center; padding:0;
 }
 .tbtn:hover{border-color:var(--accent); color:var(--accent)}
-.tbtn svg{width:15px; height:15px; fill:currentColor}
-#play{width:48px; height:48px; background:var(--accent); border-color:var(--accent); color:var(--accent-ink)}
+.tbtn svg{width:14px; height:14px; fill:currentColor}
+#play{width:42px; height:42px; background:var(--accent); border-color:var(--accent); color:var(--accent-ink)}
 #play:hover{color:var(--accent-ink); filter:brightness(1.08)}
-#play svg{width:19px; height:19px}
-.prog{display:flex; flex-direction:column; gap:6px; min-width:0}
+#play svg{width:17px; height:17px}
+.prog{flex:1; min-width:0; display:flex; flex-direction:column; gap:5px}
 .prog .row{display:flex; justify-content:space-between; gap:10px; font-size:11px; color:var(--dim); font-variant-numeric:tabular-nums}
 .prog .row span:first-child{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
 .prog .row span:last-child{flex:none}
-.track{height:4px; border-radius:99px; background:var(--surface-2); border:1px solid var(--border); overflow:hidden}
+.track{height:3px; border-radius:99px; background:var(--surface-2); border:1px solid var(--border); overflow:hidden}
 .track i{display:block; height:100%; width:0; background:var(--accent); transition:width .18s linear}
-.ctrl{display:flex; flex-direction:column; gap:4px; min-width:0}
-.ctrl .top{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
-.ctrl .num{font-size:12px; font-weight:600; font-variant-numeric:tabular-nums}
-input[type=range]{width:100%; accent-color:var(--accent); margin:0; height:20px}
-.sel{
-  width:100%; font:inherit; font-size:12px; padding:6px 8px; color:var(--text);
-  background:var(--surface-2); border:1px solid var(--border); border-radius:8px;
-  max-width:100%; text-overflow:ellipsis;
-}
-.note{grid-column:1/-1; font-size:12px; color:var(--dim); margin:0}
-.note b{color:var(--text); font-weight:600}
 
-/* ── Pegar texto / soltar archivo ────────────────────────────── */
-.paste{
-  max-width:34em; margin:0 auto 26px; display:none; flex-direction:column; gap:10px;
-  background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:14px;
-}
-.paste.open{display:flex}
-.paste textarea{
-  font:inherit; font-size:14px; line-height:1.55; color:var(--text);
-  background:var(--surface-2); border:1px solid var(--border); border-radius:8px;
-  padding:10px; min-height:150px; resize:vertical; width:100%;
-}
+/* ── Soltar archivo ──────────────────────────────────────────── */
 .drop{
-  position:fixed; inset:0; z-index:50; display:none; place-items:center;
+  position:fixed; inset:0; z-index:60; display:none; place-items:center;
   background:color-mix(in srgb, var(--bg) 88%, transparent);
-  font-size:16px; font-weight:600; letter-spacing:-.01em;
+  font-size:16px; font-weight:600;
 }
 .drop.on{display:grid}
 .drop div{border:2px dashed var(--accent); color:var(--accent); border-radius:16px; padding:44px 60px; text-align:center}
 
-@media (max-width:860px){
-  .player{grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:10px 14px; align-items:end}
-  .prog{grid-column:1; order:1}
-  #voiceCtrl{grid-column:2; order:2}
-  .transport{grid-column:1/-1; order:3; justify-content:center; gap:14px}
-  #rateCtrl{grid-column:1; order:4}
-  #volCtrl{grid-column:2; order:5}
-  .note{order:6}
-  main{padding-bottom:250px}
-}
 @media (max-width:520px){
-  .bar{gap:8px 12px}
-  .brand{flex-basis:100%; margin-right:0}
+  .panel{right:8px; left:8px; width:auto; top:52px}
+  .brand b{display:none}
+  main{padding:24px 16px 92px}
+  .tbtn{width:36px; height:36px}
 }
 @media (prefers-reduced-motion:reduce){
   *{transition:none !important; scroll-behavior:auto !important}
@@ -226,46 +208,72 @@ input[type=range]{width:100%; accent-color:var(--accent); margin:0; height:20px}
 </style>
 
 <header class="bar">
-  <div class="brand"><span class="glyph">❧</span><b>Lector Sereno</b></div>
-
-  <div class="group">
-    <button class="btn primary" id="openBtn">Abrir archivo .txt</button>
-    <button class="btn" id="pasteBtn">Pegar texto</button>
-    <input type="file" id="file" accept=".txt,.md,.markdown,text/plain,text/markdown" hidden>
-  </div>
-
-  <div class="group">
-    <span class="lbl">Tamaño</span>
-    <div class="stepper">
-      <button id="minus" title="Reducir el texto (tecla −)" aria-label="Reducir el tamaño del texto">A−</button>
-      <span class="val" id="fsVal">20 px</span>
-      <button id="plus" title="Aumentar el texto (tecla +)" aria-label="Aumentar el tamaño del texto">A+</button>
-    </div>
-  </div>
-
-  <div class="group">
-    <span class="lbl">Tema</span>
-    <div class="themes" id="themes" role="group" aria-label="Tema de lectura"></div>
-  </div>
-
-  <p class="doc"><span id="docName">Texto de ejemplo</span><span>·</span><span id="docStats"></span></p>
+  <span class="brand"><span class="glyph">❧</span><b>Lector Sereno</b></span>
+  <span id="docName">Texto de ejemplo</span>
+  <button class="btn primary" id="openBtn">Abrir</button>
+  <button class="btn" id="ajustesBtn" aria-expanded="false" aria-controls="panel">Ajustes <span class="caret">▼</span></button>
+  <input type="file" id="file" accept=".txt,.md,.markdown,text/plain,text/markdown" hidden>
 </header>
 
-<main>
-  <section class="paste" id="pastePanel">
-    <label class="lbl" for="pasteArea">Pega aquí tu texto</label>
-    <textarea id="pasteArea" placeholder="Pega o escribe el texto que quieras leer…"></textarea>
-    <div class="group">
-      <button class="btn primary" id="useText">Usar este texto</button>
-      <button class="btn" id="cancelPaste">Cancelar</button>
+<div class="aviso" id="aviso" hidden>
+  <p id="avisoTexto"></p>
+  <button id="avisoCerrar" aria-label="Cerrar el aviso">×</button>
+</div>
+
+<div class="panel" id="panel" hidden>
+  <section>
+    <span class="lbl">Texto</span>
+    <div class="fila">
+      <button class="btn primary" id="openBtn2">Abrir archivo .txt</button>
+      <button class="btn" id="pegarBtn">Pegar texto</button>
+    </div>
+    <p class="stats" id="stats"></p>
+    <div id="pegar" hidden>
+      <textarea class="area" id="pegarArea" placeholder="Pega o escribe aquí el texto que quieras leer…"></textarea>
+      <div class="fila" style="margin-top:8px">
+        <button class="btn primary" id="usarTexto">Usar este texto</button>
+        <button class="btn" id="cancelarPegar">Cancelar</button>
+      </div>
     </div>
   </section>
-  <article id="article"></article>
-  <p class="hint">
-    Toca cualquier frase para empezar a leer desde ahí.
-    Atajos: <kbd>espacio</kbd> reproducir o pausar · <kbd>←</kbd> <kbd>→</kbd> frase anterior o siguiente · <kbd>+</kbd> <kbd>−</kbd> tamaño del texto.
-  </p>
-</main>
+
+  <section>
+    <span class="lbl">Tamaño de la letra</span>
+    <div class="stepper">
+      <button id="minus" title="Reducir (tecla −)" aria-label="Reducir el tamaño del texto">A−</button>
+      <span class="val" id="fsVal">20 px</span>
+      <button id="plus" title="Aumentar (tecla +)" aria-label="Aumentar el tamaño del texto">A+</button>
+    </div>
+  </section>
+
+  <section>
+    <span class="lbl">Tema</span>
+    <div class="temas" id="temas" role="group" aria-label="Tema de lectura"></div>
+  </section>
+
+  <section>
+    <span class="lbl">Voz</span>
+    <select class="sel" id="voice" aria-label="Voz de lectura"></select>
+    <div class="deslizador">
+      <div class="top"><label class="lbl" for="rate">Velocidad</label><span class="num" id="rateVal">1.0×</span></div>
+      <input type="range" id="rate" min="0.5" max="2" step="0.1" value="1">
+    </div>
+    <div class="deslizador">
+      <div class="top"><label class="lbl" for="vol">Volumen</label><span class="num" id="volVal">100 %</span></div>
+      <input type="range" id="vol" min="0" max="1" step="0.05" value="1">
+    </div>
+  </section>
+
+  <section>
+    <p class="atajos">
+      Toca cualquier frase para leer desde ahí.<br>
+      <kbd>espacio</kbd> reproducir o pausar · <kbd>←</kbd> <kbd>→</kbd> frase anterior o siguiente ·
+      <kbd>+</kbd> <kbd>−</kbd> tamaño · <kbd>esc</kbd> cerrar este panel
+    </p>
+  </section>
+</div>
+
+<main><article id="article"></article></main>
 
 <footer class="player">
   <div class="transport">
@@ -274,28 +282,10 @@ input[type=range]{width:100%; accent-color:var(--accent); margin:0; height:20px}
     <button class="tbtn" id="next" title="Frase siguiente" aria-label="Frase siguiente"><svg viewBox="0 0 24 24"><path d="M14.5 5H17v14h-2.5zM6 5l9 7-9 7z"/></svg></button>
     <button class="tbtn" id="stop" title="Detener" aria-label="Detener la lectura"><svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1.5"/></svg></button>
   </div>
-
   <div class="prog">
     <div class="row"><span id="progText">Listo para leer</span><span id="progPct">0 %</span></div>
     <div class="track"><i id="progBar"></i></div>
   </div>
-
-  <div class="ctrl" id="rateCtrl">
-    <div class="top"><label class="lbl" for="rate">Velocidad</label><span class="num" id="rateVal">1.0×</span></div>
-    <input type="range" id="rate" min="0.5" max="2" step="0.1" value="1">
-  </div>
-
-  <div class="ctrl" id="volCtrl">
-    <div class="top"><label class="lbl" for="vol">Volumen</label><span class="num" id="volVal">100 %</span></div>
-    <input type="range" id="vol" min="0" max="1" step="0.05" value="1">
-  </div>
-
-  <div class="ctrl" id="voiceCtrl">
-    <div class="top"><label class="lbl" for="voice">Voz</label></div>
-    <select class="sel" id="voice" aria-label="Voz de lectura"></select>
-  </div>
-
-  <p class="note" id="note" hidden></p>
 </footer>
 
 <div class="drop" id="drop"><div>Suelta aquí tu archivo de texto</div></div>
@@ -310,26 +300,40 @@ const store = {
   get(k, d){ try{ const v = localStorage.getItem("lector."+k); return v===null?d:v; }catch(e){ return d; } },
   set(k, v){ try{ localStorage.setItem("lector."+k, v); }catch(e){} }
 };
+function esc(t){ return String(t).replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
 
-/* ── Texto de ejemplo (se reemplaza al abrir un archivo) ─────── */
 const DEMO = `Cómo usar este lector
 
 Este es un texto de ejemplo. Abre un archivo de texto con el botón de arriba, o arrástralo sobre esta página, y el contenido aparecerá aquí listo para leer.
 
-Para leer con comodidad, ajusta el tamaño de la letra con A− y A+, y elige el tema que mejor te funcione. Claro y Papel descansan la vista de día; Penumbra y Nocturno sirven de noche; Contraste está pensado para quien necesita el máximo de legibilidad.
+Todos los ajustes viven en el panel Ajustes, para dejarle a la lectura el resto de la pantalla. Ahí eliges el tema, el tamaño de la letra, la voz, la velocidad y el volumen.
 
-Para escuchar el texto, presiona el botón grande de reproducción. La frase que se está leyendo queda resaltada y la página la sigue sola. Si quieres empezar en otro punto, toca directamente la frase.
+Para escuchar el texto, presiona el botón de reproducción. La frase que se está leyendo queda resaltada y la página la sigue sola. Si quieres empezar en otro punto, toca directamente la frase.
 
-Debajo puedes bajar o subir el volumen y ajustar la velocidad, desde media hasta el doble. Si tu equipo tiene varias voces en español instaladas, aparecerán en la lista: las de acento latinoamericano se muestran primero.
+Los temas Claro y Papel descansan la vista de día; Penumbra y Nocturno sirven de noche; Contraste está pensado para quien necesita el máximo de legibilidad.
 
 Todo ocurre dentro de tu navegador. El archivo que abres no se envía a ningún servidor.`;
 
-/* ── Estado ──────────────────────────────────────────────────── */
 const S = { chunks:[], i:0, playing:false, paused:false, gen:0, words:0 };
-let piperLib = null, piperListo = false, piperPedido = false, audioLibre = false;
+
+/* ── Panel de ajustes ────────────────────────────────────────── */
+const panel = $("#panel"), ajustesBtn = $("#ajustesBtn");
+function abrirPanel(abrir){
+  panel.hidden = !abrir;
+  ajustesBtn.setAttribute("aria-expanded", String(abrir));
+}
+ajustesBtn.addEventListener("click", e => { e.stopPropagation(); abrirPanel(panel.hidden); });
+panel.addEventListener("click", e => e.stopPropagation());
+document.addEventListener("click", () => { if(!panel.hidden) abrirPanel(false); });
+
+function aviso(html){
+  $("#avisoTexto").innerHTML = html || "";
+  $("#aviso").hidden = !html;
+}
+$("#avisoCerrar").addEventListener("click", () => aviso(""));
 
 /* ── Temas ───────────────────────────────────────────────────── */
-const THEMES = [
+const TEMAS = [
   {id:"auto",      label:"Auto",      sw:"linear-gradient(135deg,#FCFBF8 50%,#15181B 50%)"},
   {id:"claro",     label:"Claro",     sw:"#FCFBF8"},
   {id:"papel",     label:"Papel",     sw:"#F3E9D6"},
@@ -337,39 +341,39 @@ const THEMES = [
   {id:"nocturno",  label:"Nocturno",  sw:"#0E1012"},
   {id:"contraste", label:"Contraste", sw:"linear-gradient(135deg,#000 50%,#FFE14D 50%)"}
 ];
-let theme = store.get("tema","auto");
-const themesBox = $("#themes");
-THEMES.forEach(t => {
+const cajaTemas = $("#temas");
+TEMAS.forEach(t => {
   const b = document.createElement("button");
   b.className = "chip"; b.type = "button"; b.dataset.id = t.id;
   const sw = document.createElement("span"); sw.className = "sw"; sw.style.background = t.sw;
   b.append(sw, document.createTextNode(t.label));
-  b.addEventListener("click", () => setTheme(t.id));
-  themesBox.appendChild(b);
+  b.addEventListener("click", () => setTema(t.id));
+  cajaTemas.appendChild(b);
 });
-function setTheme(id){
-  theme = id; store.set("tema", id);
+function setTema(id){
+  store.set("tema", id);
   if(id === "auto") document.documentElement.removeAttribute("data-theme");
   else document.documentElement.setAttribute("data-theme", id);
-  themesBox.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.id === id)));
+  cajaTemas.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.id === id)));
 }
-setTheme(THEMES.some(t => t.id === theme) ? theme : "auto");
+const temaGuardado = store.get("tema", "auto");
+setTema(TEMAS.some(t => t.id === temaGuardado) ? temaGuardado : "auto");
 
 /* ── Tamaño de letra ─────────────────────────────────────────── */
-const SIZES = [16,17,18,19,20,22,24,26,28,31,34,38];
-let si = SIZES.indexOf(parseInt(store.get("tam","20"),10));
-if(si < 0) si = 4;
-function setSize(n){
-  si = Math.max(0, Math.min(SIZES.length-1, n));
-  document.documentElement.style.setProperty("--fs", SIZES[si]+"px");
-  $("#fsVal").textContent = SIZES[si]+" px";
-  $("#minus").disabled = si === 0;
-  $("#plus").disabled = si === SIZES.length-1;
-  store.set("tam", SIZES[si]);
+const TAMANOS = [16,17,18,19,20,22,24,26,28,31,34,38];
+let ti = TAMANOS.indexOf(parseInt(store.get("tam","20"),10));
+if(ti < 0) ti = 4;
+function setTamano(n){
+  ti = Math.max(0, Math.min(TAMANOS.length-1, n));
+  document.documentElement.style.setProperty("--fs", TAMANOS[ti]+"px");
+  $("#fsVal").textContent = TAMANOS[ti]+" px";
+  $("#minus").disabled = ti === 0;
+  $("#plus").disabled = ti === TAMANOS.length-1;
+  store.set("tam", TAMANOS[ti]);
 }
-$("#minus").addEventListener("click", () => setSize(si-1));
-$("#plus").addEventListener("click", () => setSize(si+1));
-setSize(si);
+$("#minus").addEventListener("click", () => setTamano(ti-1));
+$("#plus").addEventListener("click", () => setTamano(ti+1));
+setTamano(ti);
 
 /* ── Partir el texto en frases ───────────────────────────────── */
 const MAX = 170;
@@ -393,11 +397,9 @@ function cortes(p){
   if(tail) out.push(tail);
   return out.length ? out : [p];
 }
-
-function sentences(p){
-  const rough = cortes(p);
+function frases(p){
   const out = [];
-  rough.forEach(raw => {
+  cortes(p).forEach(raw => {
     const s = raw.trim();
     if(!s) return;
     if(s.length < 26 && out.length){ out[out.length-1] += " " + s; return; }
@@ -417,113 +419,98 @@ function sentences(p){
 
 /* ── Pintar el texto ─────────────────────────────────────────── */
 const article = $("#article");
-function render(raw, name){
+function render(raw, nombre){
   stop();
-  piperCache.forEach(u => URL.revokeObjectURL(u));
-  piperCache.clear();
-  const clean = String(raw).replace(/\r\n?/g, "\n").replace(/ /g, " ").trim();
-  let paras = clean.split(/\n{2,}/).map(t => t.trim()).filter(Boolean);
-  if(paras.length < 2) paras = clean.split(/\n/).map(t => t.trim()).filter(Boolean);
+  const limpio = String(raw).replace(/\r\n?/g, "\n").replace(/ /g, " ").trim();
+  let parrafos = limpio.split(/\n{2,}/).map(t => t.trim()).filter(Boolean);
+  if(parrafos.length < 2) parrafos = limpio.split(/\n/).map(t => t.trim()).filter(Boolean);
 
   S.chunks = [];
   article.textContent = "";
-  paras.forEach((p, pi) => {
+  parrafos.forEach((p, pi) => {
     const el = document.createElement("p");
     if(pi === 0 && p.length < 90 && !/[.!?]$/.test(p)) el.className = "h";
-    sentences(p.replace(/\n/g, " ")).forEach(s => {
+    frases(p.replace(/\n/g, " ")).forEach(f => {
       const sp = document.createElement("span");
-      sp.className = "sent"; sp.textContent = s;
+      sp.className = "sent"; sp.textContent = f;
       sp.dataset.i = S.chunks.length; sp.title = "Leer desde aquí";
       el.append(sp, document.createTextNode(" "));
-      S.chunks.push({text:s, el:sp});
+      S.chunks.push({ text:f, el:sp });
     });
     article.appendChild(el);
   });
 
-  S.words = (clean.match(/[\wÀ-ÿ'’-]+/g) || []).length;
-  $("#docName").textContent = name;
+  S.words = (limpio.match(/[\wÀ-ÿ'’-]+/g) || []).length;
+  $("#docName").textContent = nombre;
   stats(); progress();
-  window.scrollTo({top:0, behavior:"auto"});
+  window.scrollTo({ top:0, behavior:"auto" });
 }
 function stats(){
   const wpm = 165 * Number($("#rate").value);
   const min = Math.max(1, Math.round(S.words / wpm));
-  $("#docStats").textContent =
+  $("#stats").textContent =
     S.words.toLocaleString("es") + " palabras · " + S.chunks.length.toLocaleString("es") +
     " frases · ≈ " + min + " min en voz a " + Number($("#rate").value).toFixed(1) + "×";
 }
 
 /* ── Abrir archivos ──────────────────────────────────────────── */
-function loadFile(f){
+function cargarArchivo(f){
   if(!f) return;
   const ok = /\.(txt|md|markdown|text|log|csv)$/i.test(f.name) || /^text\//.test(f.type) || f.type === "";
-  if(!ok){ note("Ese archivo no es de texto. Usa un archivo <b>.txt</b> (o .md); para un PDF o un Word, guarda antes el contenido como texto plano.", true); return; }
+  if(!ok){ aviso("Ese archivo no es de texto. Usa un archivo <b>.txt</b> (o .md); para un PDF o un Word, guarda antes el contenido como texto plano."); return; }
   const r = new FileReader();
   r.onload = () => {
     render(r.result, f.name);
     store.set("txt", String(r.result).slice(0, 300000));
     store.set("nom", f.name);
-    note("");
+    aviso(""); abrirPanel(false);
   };
-  r.onerror = () => note("No se pudo leer el archivo. Intenta abrirlo de nuevo.", true);
+  r.onerror = () => aviso("No se pudo leer el archivo. Intenta abrirlo de nuevo.");
   r.readAsText(f, "utf-8");
 }
 $("#openBtn").addEventListener("click", () => $("#file").click());
-$("#file").addEventListener("change", e => { loadFile(e.target.files[0]); e.target.value = ""; });
+$("#openBtn2").addEventListener("click", () => $("#file").click());
+$("#file").addEventListener("change", e => { cargarArchivo(e.target.files[0]); e.target.value = ""; });
 
 const drop = $("#drop");
-let dragDepth = 0;
-window.addEventListener("dragenter", e => { e.preventDefault(); if(++dragDepth) drop.classList.add("on"); });
+let arrastres = 0;
+window.addEventListener("dragenter", e => { e.preventDefault(); if(++arrastres) drop.classList.add("on"); });
 window.addEventListener("dragover", e => e.preventDefault());
-window.addEventListener("dragleave", () => { if(--dragDepth <= 0){ dragDepth = 0; drop.classList.remove("on"); } });
+window.addEventListener("dragleave", () => { if(--arrastres <= 0){ arrastres = 0; drop.classList.remove("on"); } });
 window.addEventListener("drop", e => {
-  e.preventDefault(); dragDepth = 0; drop.classList.remove("on");
-  if(e.dataTransfer.files && e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]);
+  e.preventDefault(); arrastres = 0; drop.classList.remove("on");
+  if(e.dataTransfer.files && e.dataTransfer.files[0]) cargarArchivo(e.dataTransfer.files[0]);
 });
 
-const panel = $("#pastePanel");
-$("#pasteBtn").addEventListener("click", () => {
-  panel.classList.toggle("open");
-  if(panel.classList.contains("open")) $("#pasteArea").focus();
+$("#pegarBtn").addEventListener("click", () => {
+  const caja = $("#pegar");
+  caja.hidden = !caja.hidden;
+  if(!caja.hidden) $("#pegarArea").focus();
 });
-$("#cancelPaste").addEventListener("click", () => panel.classList.remove("open"));
-$("#useText").addEventListener("click", () => {
-  const t = $("#pasteArea").value.trim();
-  if(!t){ note("Escribe o pega algún texto antes de continuar.", true); return; }
+$("#cancelarPegar").addEventListener("click", () => { $("#pegar").hidden = true; });
+$("#usarTexto").addEventListener("click", () => {
+  const t = $("#pegarArea").value.trim();
+  if(!t){ aviso("Escribe o pega algún texto antes de continuar."); return; }
   render(t, "Texto pegado");
   store.set("txt", t.slice(0, 300000)); store.set("nom", "Texto pegado");
-  panel.classList.remove("open"); note("");
+  $("#pegar").hidden = true; aviso(""); abrirPanel(false);
 });
 
-/* ── Voces ───────────────────────────────────────────────────── */
+/* ── Voces del sistema ───────────────────────────────────────── */
 const PREF = ["es-MX","es-US","es-419","es-CO","es-AR","es-CL","es-PE","es-VE","es-EC","es-GT","es-CR","es-PA","es-DO","es-BO","es-UY","es-PY","es-HN","es-NI","es-SV","es-PR","es-CU"];
-const voiceSel = $("#voice");
-let voices = [], voice = null;
-let motor = store.get("motor", "sistema");
-
-/* Las voces las instala el sistema operativo, no la página: Paulina solo existe
-   en macOS e iOS. Esta lista busca en cada equipo su equivalente más cercano,
-   de mejor a peor, para que el lector suene parecido en cualquier plataforma. */
+/* Equivalentes más cercanos a Paulina en cada plataforma, de mejor a peor. */
 const BUENAS = [
-  "paulina",                          /* macOS, iOS · es-MX */
-  "angélica", "angelica",             /* macOS reciente · es-MX */
-  "dalia",                            /* Windows 11 y Edge natural · es-MX */
-  "sabina",                           /* Windows 10 · es-MX */
-  "google español de estados unidos", /* Chrome y Android · es-US */
-  "jorge",                            /* Edge natural · es-MX */
-  "raúl", "raul",                     /* Windows · es-MX */
-  "juan",                             /* macOS · es-MX */
-  "francisca",                        /* macOS · es-CL */
-  "diego",                            /* macOS · es-AR */
-  "google español"                    /* Chrome · es-ES */
+  "paulina", "angélica", "angelica", "dalia", "sabina",
+  "google español de estados unidos", "jorge", "raúl", "raul",
+  "juan", "francisca", "diego", "google español"
 ];
 /* Voces de fantasía que traen macOS e iOS: sirven para jugar, no para leer. */
 const NOVEDAD = ["eddy","flo","grandma","grandpa","reed","rocko","sandy","shelley","superstar",
   "bells","boing","bubbles","jester","organ","trinoids","whisper","wobble","zarvox","albert","cellos"];
-function novedad(v){
-  const n = (v.name || "").toLowerCase().split(" (")[0].trim();
-  return NOVEDAD.indexOf(n) >= 0;
-}
+const voiceSel = $("#voice");
+let voices = [], voice = null;
+
+function novedad(v){ return NOVEDAD.indexOf((v.name || "").toLowerCase().split(" (")[0].trim()) >= 0; }
 function esLatina(v){ return PREF.indexOf((v.lang || "").replace("_", "-")) >= 0; }
 function conocida(v){
   const n = (v.name || "").toLowerCase();
@@ -533,457 +520,86 @@ function rank(v){
   const lang = (v.lang || "").replace("_", "-");
   const c = conocida(v), lat = PREF.indexOf(lang);
   if(novedad(v)) return 700 + (lat >= 0 ? 0 : 10);
-  if(c >= 0 && lat >= 0) return c;          /* nombre conocido y acento latino */
-  if(lat >= 0) return 50 + lat;             /* latina, aunque no esté en la lista */
-  if(c >= 0) return 250;                    /* voz buena, pero de España */
+  if(c >= 0 && lat >= 0) return c;
+  if(lat >= 0) return 50 + lat;
+  if(c >= 0) return 250;
   if(/^es-ES/i.test(lang)) return 320;
   if(/^es/i.test(lang)) return 300;
   return 900;
 }
-function esc(t){ return String(t).replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
-
 const GRUPOS = [
   ["Recomendadas · español latino", r => r < 50],
   ["Otras voces en español latino", r => r >= 50 && r < 250],
   ["Voces en español de España",    r => r >= 250 && r < 700],
-  ["Voces de fantasía del sistema",  r => r >= 700 && r < 900],
+  ["Voces de fantasía del sistema", r => r >= 700 && r < 900],
   ["Otras voces",                   r => r >= 900]
 ];
-
-function loadVoices(){
+function loadVoices(definitivo){
   if(!synth) return;
-  const all = synth.getVoices() || [];
-  const es = all.filter(v => /^es/i.test(v.lang || ""));
-  voices = (es.length ? es : all).sort((a,b) => rank(a)-rank(b) || a.name.localeCompare(b.name));
+  const todas = synth.getVoices() || [];
+  if(!todas.length && !definitivo) return;      /* la lista todavía no llega */
+  const es = todas.filter(v => /^es/i.test(v.lang || ""));
+  voices = (es.length ? es : todas).sort((a,b) => rank(a)-rank(b) || a.name.localeCompare(b.name));
 
   voiceSel.textContent = "";
-  const gPiper = document.createElement("optgroup");
-  gPiper.label = "Voz descargable · igual en todo equipo";
-  const oPiper = document.createElement("option");
-  oPiper.value = "piper";
-  oPiper.textContent = "Piper · es_MX-claude-high · 63 MB";
-  gPiper.appendChild(oPiper);
-  voiceSel.appendChild(gPiper);
-
-  GRUPOS.forEach(([titulo, filtro]) => {
-    const lista = voices.map((v, i) => [v, i]).filter(par => filtro(rank(par[0])));
+  GRUPOS.forEach(g => {
+    const lista = voices.map((v, i) => [v, i]).filter(par => g[1](rank(par[0])));
     if(!lista.length) return;
-    const g = document.createElement("optgroup");
-    g.label = titulo;
+    const og = document.createElement("optgroup");
+    og.label = g[0];
     lista.forEach(par => {
       const o = document.createElement("option");
       o.value = par[1];
       o.textContent = (par[1] === 0 ? "★ " : "") + par[0].name + " · " + par[0].lang;
-      g.appendChild(o);
+      og.appendChild(o);
     });
-    voiceSel.appendChild(g);
+    voiceSel.appendChild(og);
   });
 
-  /* Se respeta la voz que hayas elegido; si no existe en este equipo, se toma la mejor. */
-  const saved = store.get("voz", "");
+  const guardada = store.get("voz", "");
   let idx = -1;
-  if(saved){
-    idx = voices.findIndex(v => v.name + "|" + v.lang === saved);
+  if(guardada){
+    idx = voices.findIndex(v => v.name + "|" + v.lang === guardada);
     if(idx < 0){
-      const nom = saved.split("|")[0].toLowerCase();
+      const nom = guardada.split("|")[0].toLowerCase();
       idx = voices.findIndex(v => v.name.toLowerCase() === nom);
     }
   }
   if(idx < 0) idx = voices.length ? 0 : -1;
   if(idx >= 0){ voiceSel.value = idx; voice = voices[idx]; }
-  if(piperPedido || (motor === "piper" && piperListo)) voiceSel.value = "piper";
 
   if(!voices.length){
-    note("Tu navegador no tiene voces instaladas para leer en voz alta. En Windows y Android puedes agregar una voz en español desde los ajustes del sistema.", true);
-  } else if(!es.length){
-    note("No hay voces en español instaladas en este equipo; se usará la voz disponible. Puedes agregar una voz en español desde los ajustes del sistema.", true);
-  } else if(conocida(voices[idx]) < 0 || !esLatina(voices[idx])){
-    note("En este equipo no está Paulina ni otra voz latina de las recomendadas. Se eligió <b>" + esc(voices[idx].name) + "</b>, la mejor disponible aquí; puedes cambiarla en la lista.", true);
-  } else {
-    note("");
+    if(definitivo) aviso("Tu navegador no tiene voces instaladas para leer en voz alta. En Windows y Android puedes agregar una voz en español desde los ajustes del sistema.");
+  }else if(!es.length){
+    aviso("No hay voces en español instaladas en este equipo; se usará la voz disponible. Puedes agregar una voz en español desde los ajustes del sistema.");
+  }else if(conocida(voices[idx]) < 0 || !esLatina(voices[idx])){
+    aviso("En este equipo no está Paulina ni otra voz latina de las recomendadas. Se eligió <b>" + esc(voices[idx].name) + "</b>, la mejor disponible aquí; puedes cambiarla en Ajustes.");
   }
 }
 voiceSel.addEventListener("change", () => {
-  if(voiceSel.value === "piper"){ activarPiper(); return; }
-  motor = "sistema"; store.set("motor", "sistema");
   voice = voices[voiceSel.value] || null;
-  if(voice){ store.set("voz", voice.name + "|" + voice.lang); note(""); }
+  if(voice){ store.set("voz", voice.name + "|" + voice.lang); aviso(""); }
   if(S.playing) restart();
 });
 if(synth){
   loadVoices();
-  synth.addEventListener ? synth.addEventListener("voiceschanged", loadVoices) : (synth.onvoiceschanged = loadVoices);
-  setTimeout(loadVoices, 400);
-} else {
-  note("Este navegador no admite la lectura en voz alta. El texto, los temas y el tamaño de letra funcionan igual.", true);
+  const alCambiar = () => loadVoices();
+  synth.addEventListener ? synth.addEventListener("voiceschanged", alCambiar) : (synth.onvoiceschanged = alCambiar);
+  setTimeout(alCambiar, 400);
+  setTimeout(() => loadVoices(true), 1600);     /* recién aquí damos por cerrada la lista */
+}else{
+  aviso("Este navegador no admite la lectura en voz alta. El texto, los temas y el tamaño de letra funcionan igual.");
   ["play","prev","next","stop","rate","vol","voice"].forEach(id => { $("#"+id).disabled = true; });
-}
-
-/* ── Voz descargable (Piper) ──────────────────────────────────────
-   La misma voz en cualquier plataforma: el modelo se descarga una vez,
-   queda guardado en este navegador y después funciona sin conexión.   */
-const PIPER_ID  = "es_MX-claude-high";
-const PIPER_LIB = "https://cdn.jsdelivr.net/npm/@diffusionstudio/vits-web@1.0.3/+esm";
-const PIPER_HF  = "https://huggingface.co/diffusionstudio/piper-voices/resolve/main";
-const PIPER_RUTA = "es/es_MX/claude/high/es_MX-claude-high.onnx";
-const audio = new Audio();
-audio.preservesPitch = audio.mozPreservesPitch = audio.webkitPreservesPitch = true;
-const piperCache = new Map();
-
-/* iOS solo deja sonar audio que nació de un toque: lo destrabamos en el primero. */
-function desbloquearAudio(){
-  if(audioLibre) return;
-  audioLibre = true;
-  try{
-    audio.src = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=";
-    const pr = audio.play();
-    if(pr) pr.then(() => { audio.pause(); audio.currentTime = 0; }).catch(() => {});
-  }catch(e){}
-}
-/* Safari solo escribe archivos grandes de forma fiable con createSyncAccessHandle,
-   y esa API únicamente existe dentro de un Web Worker. Este es ese worker. */
-const CODIGO_WORKER = `
-self.onmessage = async (e) => {
-  const archivos = e.data.archivos;
-  let dir = null, nombre = "";
-  try{
-    const root = await navigator.storage.getDirectory();
-    dir = await root.getDirectoryHandle("piper", { create: true });
-    for(const url of archivos){
-      nombre = url.split("/").pop();
-      const handle = await dir.getFileHandle(nombre, { create: true });
-      const acceso = await handle.createSyncAccessHandle();
-      try{
-        acceso.truncate(0);
-        const res = await fetch(url);
-        if(!res.ok) throw new Error("HTTP " + res.status + " al pedir " + nombre);
-        const total = +(res.headers.get("Content-Length") || 0);
-        const lector = res.body.getReader();
-        let pos = 0;
-        while(true){
-          const trozo = await lector.read();
-          if(trozo.done) break;
-          acceso.write(trozo.value, { at: pos });
-          pos += trozo.value.length;
-          if(total > 100000) self.postMessage({ tipo: "avance", loaded: pos, total: total });
-        }
-        acceso.flush();
-        if(total && pos !== total) throw new Error("descarga incompleta de " + nombre);
-      } finally {
-        try{ acceso.close(); }catch(x){}
-      }
-    }
-    self.postMessage({ tipo: "listo" });
-  }catch(err){
-    if(dir && nombre){ try{ await dir.removeEntry(nombre); }catch(x){} }
-    self.postMessage({ tipo: "error", mensaje: String(err && err.message ? err.message : err) });
-  }
-};
-`;
-
-function guardarModeloWorker(onProgress){
-  return new Promise((resolve, reject) => {
-    let w;
-    try{
-      w = new Worker(URL.createObjectURL(new Blob([CODIGO_WORKER], { type: "text/javascript" })));
-    }catch(e){ reject(e); return; }
-    const cerrar = (fn, arg) => { try{ w.terminate(); }catch(x){} fn(arg); };
-    w.onmessage = ev => {
-      const d = ev.data;
-      if(d.tipo === "avance") onProgress(d.loaded, d.total);
-      else if(d.tipo === "listo") cerrar(resolve);
-      else if(d.tipo === "error") cerrar(reject, new Error(d.mensaje));
-    };
-    w.onerror = ev => cerrar(reject, new Error(ev.message || "falló el worker de descarga"));
-    w.postMessage({ archivos: [PIPER_HF + "/" + PIPER_RUTA + ".json", PIPER_HF + "/" + PIPER_RUTA] });
-  });
-}
-
-async function espacio(){
-  try{
-    const e = await navigator.storage.estimate();
-    const mb = n => Math.round((n || 0) / 1048576);
-    return " Espacio del navegador: " + mb(e.usage) + " MB usados de " + mb(e.quota) + " MB.";
-  }catch(e){ return ""; }
-}
-
-async function guardarModelo(onProgress){
-  const root = await navigator.storage.getDirectory();
-  const dir = await root.getDirectoryHandle("piper", { create: true });
-  const archivos = [PIPER_HF + "/" + PIPER_RUTA + ".json", PIPER_HF + "/" + PIPER_RUTA];
-  for(const url of archivos){
-    const nombre = url.split("/").pop();
-    const res = await fetch(url);
-    if(!res.ok) throw new Error("HTTP " + res.status + " al pedir " + nombre);
-    const total = +(res.headers.get("Content-Length") || 0);
-    const handle = await dir.getFileHandle(nombre, { create: true });
-    const salida = await handle.createWritable();
-    try{
-      const lector = res.body.getReader();
-      let recibido = 0;
-      while(true){
-        const trozo = await lector.read();
-        if(trozo.done) break;
-        await salida.write(trozo.value);      /* al disco, sin acumular en memoria */
-        recibido += trozo.value.length;
-        if(total > 100000) onProgress(recibido, total);
-      }
-      await salida.close();
-      if(total && recibido !== total) throw new Error("descarga incompleta de " + nombre);
-    }catch(e){
-      try{ await salida.abort(); }catch(x){}
-      try{ await dir.removeEntry(nombre); }catch(x){}
-      throw e;
-    }
-  }
-}
-async function cargarPiper(){
-  if(!piperLib) piperLib = await import(PIPER_LIB);
-  return piperLib;
-}
-async function activarPiper(){
-  stop();
-  let paso = "iniciar";
-  try{
-    $("#progText").textContent = "Cargando el motor de voz…";
-    piperPedido = true;
-    voiceSel.value = "piper";
-    paso = "cargar el motor";
-    const tts = await cargarPiper();
-
-    if(store.get("piperOk", "") !== PIPER_ID){
-      note("Descargando la voz <b>" + PIPER_ID + "</b> · 63 MB. Solo la primera vez: después queda guardada en este navegador y funciona sin conexión.", true);
-      const avance = (loaded, total) => {
-        const pct = total ? Math.round(loaded / total * 100) : 0;
-        $("#progText").textContent = "Descargando la voz · " + pct + " %";
-        $("#progPct").textContent = pct + " %";
-        $("#progBar").style.width = pct + "%";
-      };
-      paso = "descargar y guardar la voz";
-      try{ if(navigator.storage && navigator.storage.persist) await navigator.storage.persist(); }catch(e){}
-      const intentos = [];
-      let guardado = false;
-      if(navigator.storage && navigator.storage.getDirectory){
-        for(const via of [["worker", guardarModeloWorker], ["directo", guardarModelo]]){
-          try{ await via[1](avance); guardado = true; break; }
-          catch(err){ intentos.push(via[0] + ": " + (err && err.message ? err.message : err)); }
-        }
-      }
-      if(!guardado){
-        try{ await tts.download(PIPER_ID, p => avance(p.loaded, p.total)); }
-        catch(err){
-          intentos.push("librería: " + (err && err.message ? err.message : err));
-          throw new Error(intentos.join(" · "));
-        }
-      }
-      paso = "preparar la voz";
-      $("#progText").textContent = "Preparando la voz…";
-      await tts.predict({ text: "Listo.", voiceId: PIPER_ID });   /* prueba con el motor probado */
-      store.set("piperOk", PIPER_ID);
-    }
-    motor = "piper"; piperListo = true; store.set("motor", "piper");
-    voiceSel.value = "piper";
-    setTimeout(() => { prepararMotor().catch(() => {}); }, 4000);   /* el motor rápido, sin prisa */
-    note("Voz <b>" + PIPER_ID + "</b> lista. Suena igual en cualquier equipo y ya no necesita conexión." +
-         (razonRespaldo ? " Va en modo compatible, un poco más lento al empezar cada frase (" + esc(razonRespaldo) + ")." : ""), true);
-    progress();
-  }catch(e){
-    motor = "sistema"; piperListo = false; piperPedido = false; piperLib = null;
-    store.set("motor", "sistema"); store.set("piperOk", "");
-    if(voices.length){ voiceSel.value = 0; voice = voices[0]; }
-    const msg = esc(e && e.message ? e.message : e);
-    const memoria = /memor|quota|space|transient/i.test(msg);
-    const sitio = memoria ? await espacio() : "";
-    note("No se pudo <b>" + paso + "</b>: " + msg + ". Se usará la voz del sistema. " +
-         (memoria
-           ? "A tu navegador le faltó espacio o memoria." + sitio + " Cierra otras pestañas y vuelve a intentarlo; en iPhone ayuda añadir la página a la pantalla de inicio, porque ahí Safari le da más espacio a la web."
-           : "Suele pasar sin conexión o al abrir el archivo con doble clic (file://)."), true);
-    progress();
-  }
-}
-/* ── Motor propio de síntesis ─────────────────────────────────────
-   La librería crea una sesión ONNX nueva en cada frase, o sea que vuelve
-   a leer y parsear los 63 MB del modelo cada vez: eso es lo que hace
-   lenta la primera lectura. Aquí la sesión se crea una vez y se reutiliza. */
-const ORT_ESM   = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.18.0/+esm";
-const ORT_WASM  = "https://cdnjs.cloudflare.com/ajax/libs/onnxruntime-web/1.18.0/";
-const FONEMAS   = "https://cdn.jsdelivr.net/npm/@diffusionstudio/piper-wasm@1.0.0/build/piper_phonemize";
-let ortMod = null, sesion = null, cfgVoz = null, fonemizador = null;
-let resolverFonemas = null, rechazarFonemas = null, preparando = null, pasoMotor = "";
-
-function cargarScript(url){
-  return new Promise((ok, mal) => {
-    const t = document.createElement("script");
-    t.src = url;
-    t.onload = () => ok();
-    t.onerror = () => mal(new Error("no se pudo cargar el fonemizador"));
-    document.head.appendChild(t);
-  });
-}
-async function archivoOPFS(nombre){
-  const root = await navigator.storage.getDirectory();
-  const dir = await root.getDirectoryHandle("piper");
-  return await (await dir.getFileHandle(nombre)).getFile();
-}
-function prepararMotor(){
-  if(sesion) return Promise.resolve();
-  if(preparando) return preparando;
-  preparando = (async () => {
-    pasoMotor = "cargar onnxruntime";
-    const ort = ortMod || (ortMod = await import(ORT_ESM));
-    ort.env.allowLocalModels = false;
-    ort.env.wasm.wasmPaths = ORT_WASM;
-    ort.env.wasm.numThreads = 1;              /* sin aislamiento no hay hilos disponibles */
-    pasoMotor = "leer la configuración";
-    cfgVoz = JSON.parse(await (await archivoOPFS(PIPER_ID + ".onnx.json")).text());
-    pasoMotor = "leer el modelo";
-    const modelo = await archivoOPFS(PIPER_ID + ".onnx");
-    pasoMotor = "crear la sesión";
-    const enlace = URL.createObjectURL(modelo);
-    try{
-      sesion = await ort.InferenceSession.create(enlace);      /* sin copia intermedia */
-    }catch(e){
-      pasoMotor = "crear la sesión (copia en memoria)";
-      sesion = await ort.InferenceSession.create(await modelo.arrayBuffer());
-    }finally{
-      URL.revokeObjectURL(enlace);
-    }
-    pasoMotor = "cargar el fonemizador";
-    if(!window.createPiperPhonemize) await cargarScript(FONEMAS + ".js");
-    fonemizador = await window.createPiperPhonemize({
-      print: d => { const ok = resolverFonemas; resolverFonemas = rechazarFonemas = null; if(ok) ok(JSON.parse(d).phoneme_ids); },
-      printErr: m => { const mal = rechazarFonemas; resolverFonemas = rechazarFonemas = null; if(mal) mal(new Error(m)); },
-      locateFile: u => u.endsWith(".wasm") ? FONEMAS + ".wasm" : (u.endsWith(".data") ? FONEMAS + ".data" : u)
-    });
-    pasoMotor = "";
-  })();
-  preparando.catch(() => { preparando = null; sesion = null; });
-  return preparando;
-}
-function fonemas(texto){
-  return new Promise((ok, mal) => {
-    resolverFonemas = ok; rechazarFonemas = mal;
-    const corte = setTimeout(() => {
-      if(resolverFonemas === ok){ resolverFonemas = rechazarFonemas = null; mal(new Error("el fonemizador no respondió")); }
-    }, 20000);
-    const limpiar = f => v => { clearTimeout(corte); f(v); };
-    resolverFonemas = limpiar(ok); rechazarFonemas = limpiar(mal);
-    try{
-      fonemizador.callMain(["-l", cfgVoz.espeak.voice, "--input",
-        JSON.stringify([{ text: texto }]), "--espeak_data", "/espeak-ng-data"]);
-    }catch(e){ clearTimeout(corte); resolverFonemas = rechazarFonemas = null; mal(e); }
-  });
-}
-function pcmAWav(pcm, sampleRate){
-  const n = pcm.length, cab = 44;
-  const v = new DataView(new ArrayBuffer(n * 2 + cab));
-  v.setUint32(0, 0x46464952, true);            /* RIFF */
-  v.setUint32(4, v.buffer.byteLength - 8, true);
-  v.setUint32(8, 0x45564157, true);            /* WAVE */
-  v.setUint32(12, 0x20746d66, true);           /* fmt  */
-  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
-  v.setUint32(24, sampleRate, true); v.setUint32(28, sampleRate * 2, true);
-  v.setUint16(32, 2, true); v.setUint16(34, 16, true);
-  v.setUint32(36, 0x61746164, true);           /* data */
-  v.setUint32(40, n * 2, true);
-  let p = cab;
-  for(let i = 0; i < n; i++){
-    const x = pcm[i];
-    v.setInt16(p, x >= 1 ? 0x7fff : (x <= -1 ? -0x8000 : (x * 0x8000) | 0), true);
-    p += 2;
-  }
-  return v.buffer;
-}
-async function sintetizar(texto){
-  await prepararMotor();
-  pasoMotor = "convertir el texto en fonemas";
-  const ids = await fonemas(texto);
-  pasoMotor = "generar el audio";
-  const ort = ortMod;
-  const feeds = {
-    input: new ort.Tensor("int64", BigInt64Array.from(ids.map(n => BigInt(n))), [1, ids.length]),
-    input_lengths: new ort.Tensor("int64", BigInt64Array.from([BigInt(ids.length)])),
-    scales: new ort.Tensor("float32", Float32Array.from([
-      cfgVoz.inference.noise_scale, cfgVoz.inference.length_scale, cfgVoz.inference.noise_w]))
-  };
-  if(cfgVoz.speaker_id_map && Object.keys(cfgVoz.speaker_id_map).length){
-    feeds.sid = new ort.Tensor("int64", BigInt64Array.from([BigInt(0)]));
-  }
-  const salida = await sesion.run(feeds);
-  pasoMotor = "";
-  return new Blob([pcmAWav(salida.output.data, cfgVoz.audio.sample_rate)], { type: "audio/wav" });
-}
-
-/* Si el motor propio no puede en este equipo, se usa el de la librería:
-   más lento, pero probado. Se recuerda la razón para poder explicarla. */
-let motorPropioSirve = true, razonRespaldo = "";
-async function sintetizarTexto(texto){
-  if(motorPropioSirve){
-    try{
-      return await sintetizar(texto);
-    }catch(e){
-      motorPropioSirve = false;
-      razonRespaldo = (pasoMotor ? "al " + pasoMotor + " · " : "") +
-                      String(e && e.message ? e.message : e).slice(0, 140);
-      try{ if(sesion && sesion.release) await sesion.release(); }catch(x){}
-      sesion = null; preparando = null; fonemizador = null;
-    }
-  }
-  const tts = await cargarPiper();
-  return await tts.predict({ text: texto, voiceId: PIPER_ID });
-}
-
-async function piperAudio(i){
-  if(piperCache.has(i)) return piperCache.get(i);
-  const wav = await sintetizarTexto(S.chunks[i].text);
-  const url = URL.createObjectURL(wav);
-  piperCache.set(i, url);
-  if(piperCache.size > 6){
-    const viejo = piperCache.keys().next().value;
-    URL.revokeObjectURL(piperCache.get(viejo));
-    piperCache.delete(viejo);
-  }
-  return url;
-}
-async function hablarPiper(){
-  const g = S.gen, i = S.i;
-  highlight();
-  if(!piperCache.has(i)){
-    $("#progText").textContent = "Preparando la frase " + (i + 1) + " de " + S.chunks.length + "…";
-  }
-  let url;
-  try{
-    url = await piperAudio(i);
-  }catch(e){
-    stop();
-    note("No se pudo generar el audio de esta frase: " + esc(e && e.message ? e.message : e), true);
-    return;
-  }
-  if(g !== S.gen || !S.playing) return;
-  audio.src = url;
-  audio.volume = volume();
-  audio.playbackRate = rate();
-  audio.onended = () => {
-    if(g !== S.gen || !S.playing) return;
-    if(S.i < S.chunks.length - 1){ S.i++; hablarPiper(); }
-    else { stop(); $("#progText").textContent = "Lectura terminada"; }
-  };
-  audio.play().catch(() => {});
-  progress();
-  if(i + 1 < S.chunks.length) piperAudio(i + 1).catch(() => {});   /* adelanta la siguiente */
 }
 
 /* ── Lectura en voz alta ─────────────────────────────────────── */
 const isChromium = /Chrome|Chromium|Edg|OPR/.test(navigator.userAgent) && !/CriOS|FxiOS/.test(navigator.userAgent);
 let keepAlive = null;
-
 function rate(){ return Number($("#rate").value); }
 function volume(){ return Number($("#vol").value); }
 
 function speakCurrent(){
-  if(!S.chunks[S.i]) return;
-  if(motor === "piper" && piperListo){ hablarPiper(); return; }
-  if(!synth) return;
+  if(!synth || !S.chunks[S.i]) return;
   const u = new SpeechSynthesisUtterance(S.chunks[S.i].text);
   const g = ++S.gen;
   if(voice) u.voice = voice;
@@ -997,7 +613,7 @@ function speakCurrent(){
   u.onerror = ev => {
     if(g !== S.gen) return;
     if(ev.error === "interrupted" || ev.error === "canceled") return;
-    stop(); note("La lectura se interrumpió. Presiona reproducir para continuar.", true);
+    stop(); aviso("La lectura se interrumpió. Presiona reproducir para continuar.");
   };
   highlight();
   synth.speak(u);
@@ -1012,32 +628,21 @@ function guard(){
   }, 9000);
 }
 function playFrom(i){
-  if(!S.chunks.length || (!synth && !piperListo)) return;
-  desbloquearAudio();
-  S.gen++;
-  if(synth) synth.cancel();
-  audio.pause();
+  if(!synth || !S.chunks.length) return;
+  synth.cancel(); S.gen++;
   S.i = Math.max(0, Math.min(S.chunks.length-1, i));
   S.playing = true; S.paused = false; icon();
-  const espera = (motor === "piper" && piperListo) ? 0 : 80;
-  setTimeout(() => { if(S.playing) speakCurrent(); }, espera);
+  setTimeout(() => { if(S.playing) speakCurrent(); }, 80);
 }
 function restart(){ if(S.playing) playFrom(S.i); }
 function toggle(){
-  if(!S.chunks.length) return;
-  desbloquearAudio();
+  if(!synth || !S.chunks.length) return;
   if(!S.playing){ playFrom(S.i); return; }
-  if(motor === "piper" && piperListo){
-    if(S.paused){ audio.play().catch(() => {}); S.paused = false; }
-    else { audio.pause(); S.paused = true; }
-    icon(); progress(); return;
-  }
-  if(!synth) return;
   if(S.paused){
     synth.resume();
     if(!synth.speaking) speakCurrent();   /* algunos navegadores olvidan la frase */
     S.paused = false;
-  } else {
+  }else{
     synth.pause(); S.paused = true;
   }
   icon(); progress();
@@ -1046,7 +651,6 @@ function stop(){
   S.playing = false; S.paused = false; S.gen++;
   clearInterval(keepAlive);
   if(synth) synth.cancel();
-  audio.pause();
   icon(); progress();
 }
 function step(d){
@@ -1059,17 +663,15 @@ function highlight(){
   const el = S.chunks[S.i] && S.chunks[S.i].el;
   if(el){
     const r = el.getBoundingClientRect();
-    const top = 90, bottom = window.innerHeight - 190;
-    if(r.top < top || r.bottom > bottom){
-      const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      el.scrollIntoView({block:"center", behavior: smooth ? "smooth" : "auto"});
+    if(r.top < 80 || r.bottom > window.innerHeight - 90){
+      const suave = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      el.scrollIntoView({ block:"center", behavior: suave ? "smooth" : "auto" });
     }
   }
   progress();
 }
 function icon(){
-  const p = $("#playIcon");
-  p.innerHTML = (S.playing && !S.paused)
+  $("#playIcon").innerHTML = (S.playing && !S.paused)
     ? '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>'
     : '<path d="M7 4l13 8-13 8z"/>';
   $("#play").title = (S.playing && !S.paused) ? "Pausar (espacio)" : "Leer en voz alta (espacio)";
@@ -1083,11 +685,6 @@ function progress(){
     ? (S.paused ? "En pausa · frase " : "Leyendo · frase ") + (S.i+1) + " de " + total
     : (S.i > 0 ? "Detenido en la frase " + (S.i+1) : "Listo para leer");
 }
-function note(html, show){
-  const n = $("#note");
-  n.innerHTML = html || "";
-  n.hidden = !show || !html;
-}
 
 $("#play").addEventListener("click", toggle);
 $("#stop").addEventListener("click", () => { stop(); S.i = 0; highlight(); });
@@ -1098,26 +695,20 @@ article.addEventListener("click", e => {
   if(s) playFrom(Number(s.dataset.i));
 });
 
-function enPiper(){ return motor === "piper" && piperListo; }
-$("#rate").addEventListener("input", () => {
-  $("#rateVal").textContent = rate().toFixed(1) + "×"; stats();
-  if(enPiper()) audio.playbackRate = rate();
-});
-$("#rate").addEventListener("change", () => { store.set("vel", rate()); if(!enPiper()) restart(); });
-$("#vol").addEventListener("input", () => {
-  $("#volVal").textContent = Math.round(volume()*100) + " %";
-  if(enPiper()) audio.volume = volume();
-});
-$("#vol").addEventListener("change", () => { store.set("vol", volume()); if(!enPiper()) restart(); });
+$("#rate").addEventListener("input", () => { $("#rateVal").textContent = rate().toFixed(1) + "×"; stats(); });
+$("#rate").addEventListener("change", () => { store.set("vel", rate()); restart(); });
+$("#vol").addEventListener("input", () => { $("#volVal").textContent = Math.round(volume()*100) + " %"; });
+$("#vol").addEventListener("change", () => { store.set("vol", volume()); restart(); });
 
 document.addEventListener("keydown", e => {
   const t = e.target;
+  if(e.key === "Escape" && !panel.hidden){ abrirPanel(false); return; }
   if(t && (t.tagName === "TEXTAREA" || t.tagName === "INPUT" || t.tagName === "SELECT")) return;
   if(e.key === " "){ e.preventDefault(); toggle(); }
   else if(e.key === "ArrowRight"){ e.preventDefault(); step(1); }
   else if(e.key === "ArrowLeft"){ e.preventDefault(); step(-1); }
-  else if(e.key === "+" || e.key === "="){ setSize(si+1); }
-  else if(e.key === "-" || e.key === "_"){ setSize(si-1); }
+  else if(e.key === "+" || e.key === "="){ setTamano(ti+1); }
+  else if(e.key === "-" || e.key === "_"){ setTamano(ti-1); }
 });
 window.addEventListener("beforeunload", () => { if(synth) synth.cancel(); });
 
@@ -1126,20 +717,7 @@ $("#rate").value = store.get("vel","1");
 $("#vol").value = store.get("vol","1");
 $("#rateVal").textContent = rate().toFixed(1) + "×";
 $("#volVal").textContent = Math.round(volume()*100) + " %";
-if(store.get("motor", "") === "piper"){
-  (async () => {
-    try{
-      const tts = await cargarPiper();
-      if(store.get("piperOk", "") === PIPER_ID && (await tts.stored()).indexOf(PIPER_ID) >= 0){
-        motor = "piper"; piperListo = true;
-        voiceSel.value = "piper";
-        note("Voz <b>" + PIPER_ID + "</b> lista, guardada en este navegador.", true);
-        setTimeout(() => { prepararMotor().catch(() => {}); }, 2000);   /* lista para el primer play */
-      }
-    }catch(e){ /* sin conexión o entorno restringido: sigue la voz del sistema */ }
-  })();
-}
-const savedTxt = store.get("txt", "");
-render(savedTxt || DEMO, savedTxt ? store.get("nom","Tu texto") : "Texto de ejemplo");
+const guardado = store.get("txt", "");
+render(guardado || DEMO, guardado ? store.get("nom","Tu texto") : "Texto de ejemplo");
 })();
 </script>
