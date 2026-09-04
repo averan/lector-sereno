@@ -778,7 +778,7 @@ async function activarPiper(){
       }
       paso = "preparar la voz";
       $("#progText").textContent = "Preparando la voz…";
-      await tts.predict({ text: "Listo.", voiceId: PIPER_ID });   /* prueba real antes de anunciarla */
+      await sintetizar("Listo.");                  /* prueba real antes de anunciarla */
       store.set("piperOk", PIPER_ID);
     }
     motor = "piper"; piperListo = true; store.set("motor", "piper");
@@ -799,10 +799,111 @@ async function activarPiper(){
     progress();
   }
 }
+/* ── Motor propio de síntesis ─────────────────────────────────────
+   La librería crea una sesión ONNX nueva en cada frase, o sea que vuelve
+   a leer y parsear los 63 MB del modelo cada vez: eso es lo que hace
+   lenta la primera lectura. Aquí la sesión se crea una vez y se reutiliza. */
+const ORT_ESM   = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.18.0/+esm";
+const ORT_WASM  = "https://cdnjs.cloudflare.com/ajax/libs/onnxruntime-web/1.18.0/";
+const FONEMAS   = "https://cdn.jsdelivr.net/npm/@diffusionstudio/piper-wasm@1.0.0/build/piper_phonemize";
+let ortMod = null, sesion = null, cfgVoz = null, fonemizador = null;
+let resolverFonemas = null, rechazarFonemas = null, preparando = null;
+
+function cargarScript(url){
+  return new Promise((ok, mal) => {
+    const t = document.createElement("script");
+    t.src = url;
+    t.onload = () => ok();
+    t.onerror = () => mal(new Error("no se pudo cargar el fonemizador"));
+    document.head.appendChild(t);
+  });
+}
+async function archivoOPFS(nombre){
+  const root = await navigator.storage.getDirectory();
+  const dir = await root.getDirectoryHandle("piper");
+  return await (await dir.getFileHandle(nombre)).getFile();
+}
+function prepararMotor(){
+  if(sesion) return Promise.resolve();
+  if(preparando) return preparando;
+  preparando = (async () => {
+    const ort = ortMod || (ortMod = await import(ORT_ESM));
+    ort.env.allowLocalModels = false;
+    ort.env.wasm.wasmPaths = ORT_WASM;
+    ort.env.wasm.numThreads = 1;              /* sin aislamiento no hay hilos disponibles */
+    cfgVoz = JSON.parse(await (await archivoOPFS(PIPER_ID + ".onnx.json")).text());
+    const modelo = await archivoOPFS(PIPER_ID + ".onnx");
+    sesion = await ort.InferenceSession.create(await modelo.arrayBuffer());
+    if(!window.createPiperPhonemize) await cargarScript(FONEMAS + ".js");
+    fonemizador = await window.createPiperPhonemize({
+      print: d => { const ok = resolverFonemas; resolverFonemas = rechazarFonemas = null; if(ok) ok(JSON.parse(d).phoneme_ids); },
+      printErr: m => { const mal = rechazarFonemas; resolverFonemas = rechazarFonemas = null; if(mal) mal(new Error(m)); },
+      locateFile: u => u.endsWith(".wasm") ? FONEMAS + ".wasm" : (u.endsWith(".data") ? FONEMAS + ".data" : u)
+    });
+  })();
+  preparando.catch(() => { preparando = null; sesion = null; });
+  return preparando;
+}
+function fonemas(texto){
+  return new Promise((ok, mal) => {
+    resolverFonemas = ok; rechazarFonemas = mal;
+    const corte = setTimeout(() => {
+      if(resolverFonemas === ok){ resolverFonemas = rechazarFonemas = null; mal(new Error("el fonemizador no respondió")); }
+    }, 20000);
+    const limpiar = f => v => { clearTimeout(corte); f(v); };
+    resolverFonemas = limpiar(ok); rechazarFonemas = limpiar(mal);
+    try{
+      fonemizador.callMain(["-l", cfgVoz.espeak.voice, "--input",
+        JSON.stringify([{ text: texto }]), "--espeak_data", "/espeak-ng-data"]);
+    }catch(e){ clearTimeout(corte); resolverFonemas = rechazarFonemas = null; mal(e); }
+  });
+}
+function pcmAWav(pcm, sampleRate){
+  const n = pcm.length, cab = 44;
+  const v = new DataView(new ArrayBuffer(n * 2 + cab));
+  v.setUint32(0, 0x46464952, true);            /* RIFF */
+  v.setUint32(4, v.buffer.byteLength - 8, true);
+  v.setUint32(8, 0x45564157, true);            /* WAVE */
+  v.setUint32(12, 0x20746d66, true);           /* fmt  */
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, sampleRate, true); v.setUint32(28, sampleRate * 2, true);
+  v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+  v.setUint32(36, 0x61746164, true);           /* data */
+  v.setUint32(40, n * 2, true);
+  let p = cab;
+  for(let i = 0; i < n; i++){
+    const x = pcm[i];
+    v.setInt16(p, x >= 1 ? 0x7fff : (x <= -1 ? -0x8000 : (x * 0x8000) | 0), true);
+    p += 2;
+  }
+  return v.buffer;
+}
+async function sintetizar(texto){
+  await prepararMotor();
+  const ids = await fonemas(texto);
+  const ort = ortMod;
+  const feeds = {
+    input: new ort.Tensor("int64", BigInt64Array.from(ids.map(n => BigInt(n))), [1, ids.length]),
+    input_lengths: new ort.Tensor("int64", BigInt64Array.from([BigInt(ids.length)])),
+    scales: new ort.Tensor("float32", Float32Array.from([
+      cfgVoz.inference.noise_scale, cfgVoz.inference.length_scale, cfgVoz.inference.noise_w]))
+  };
+  if(cfgVoz.speaker_id_map && Object.keys(cfgVoz.speaker_id_map).length){
+    feeds.sid = new ort.Tensor("int64", BigInt64Array.from([BigInt(0)]));
+  }
+  const salida = await sesion.run(feeds);
+  return new Blob([pcmAWav(salida.output.data, cfgVoz.audio.sample_rate)], { type: "audio/wav" });
+}
+
 async function piperAudio(i){
   if(piperCache.has(i)) return piperCache.get(i);
-  const tts = await cargarPiper();
-  const wav = await tts.predict({ text: S.chunks[i].text, voiceId: PIPER_ID });
+  let wav;
+  try{
+    wav = await sintetizar(S.chunks[i].text);
+  }catch(e){
+    const tts = await cargarPiper();                    /* respaldo: la librería */
+    wav = await tts.predict({ text: S.chunks[i].text, voiceId: PIPER_ID });
+  }
   const url = URL.createObjectURL(wav);
   piperCache.set(i, url);
   if(piperCache.size > 6){
@@ -1001,6 +1102,7 @@ if(store.get("motor", "") === "piper"){
         motor = "piper"; piperListo = true;
         voiceSel.value = "piper";
         note("Voz <b>" + PIPER_ID + "</b> lista, guardada en este navegador.", true);
+        setTimeout(() => { prepararMotor().catch(() => {}); }, 2000);   /* lista para el primer play */
       }
     }catch(e){ /* sin conexión o entorno restringido: sigue la voz del sistema */ }
   })();
