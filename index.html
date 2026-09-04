@@ -778,12 +778,13 @@ async function activarPiper(){
       }
       paso = "preparar la voz";
       $("#progText").textContent = "Preparando la voz…";
-      await sintetizar("Listo.");                  /* prueba real antes de anunciarla */
+      await sintetizarTexto("Listo.");             /* prueba real, con respaldo incluido */
       store.set("piperOk", PIPER_ID);
     }
     motor = "piper"; piperListo = true; store.set("motor", "piper");
     voiceSel.value = "piper";
-    note("Voz <b>" + PIPER_ID + "</b> lista. Suena igual en cualquier equipo y ya no necesita conexión.", true);
+    note("Voz <b>" + PIPER_ID + "</b> lista. Suena igual en cualquier equipo y ya no necesita conexión." +
+         (razonRespaldo ? " Va en modo compatible, un poco más lento al empezar cada frase (" + esc(razonRespaldo) + ")." : ""), true);
     progress();
   }catch(e){
     motor = "sistema"; piperListo = false; piperPedido = false; piperLib = null;
@@ -895,15 +896,27 @@ async function sintetizar(texto){
   return new Blob([pcmAWav(salida.output.data, cfgVoz.audio.sample_rate)], { type: "audio/wav" });
 }
 
+/* Si el motor propio no puede en este equipo, se usa el de la librería:
+   más lento, pero probado. Se recuerda la razón para poder explicarla. */
+let motorPropioSirve = true, razonRespaldo = "";
+async function sintetizarTexto(texto){
+  if(motorPropioSirve){
+    try{
+      return await sintetizar(texto);
+    }catch(e){
+      motorPropioSirve = false;
+      razonRespaldo = String(e && e.message ? e.message : e).slice(0, 140);
+      try{ if(sesion && sesion.release) await sesion.release(); }catch(x){}
+      sesion = null; preparando = null; fonemizador = null;
+    }
+  }
+  const tts = await cargarPiper();
+  return await tts.predict({ text: texto, voiceId: PIPER_ID });
+}
+
 async function piperAudio(i){
   if(piperCache.has(i)) return piperCache.get(i);
-  let wav;
-  try{
-    wav = await sintetizar(S.chunks[i].text);
-  }catch(e){
-    const tts = await cargarPiper();                    /* respaldo: la librería */
-    wav = await tts.predict({ text: S.chunks[i].text, voiceId: PIPER_ID });
-  }
+  const wav = await sintetizarTexto(S.chunks[i].text);
   const url = URL.createObjectURL(wav);
   piperCache.set(i, url);
   if(piperCache.size > 6){
